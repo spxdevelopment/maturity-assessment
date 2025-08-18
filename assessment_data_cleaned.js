@@ -100,7 +100,7 @@ window.assessmentData = [
     ]
   },
   {
-    "name": "Enblement Technology",
+    "name": "Enablement Technology",
     "subcategories": [
       {
         "name": "Marketing automation",
