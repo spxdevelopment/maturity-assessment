@@ -326,10 +326,10 @@ window.assessmentData = [
         "name": "Proven economic value proposition",
         "descriptions": {
           "None": "Economic value propositions are untested and not consistently proven with examples.",
-          "Emerging": "Metrics have been identified but measurable economic benefits are not clear. The concept of a value calculator is rudimentary and lacks structure. Teams rely on.",
+          "Emerging": "Metrics have been identified but measurable economic benefits are not clear. The concept of a value calculator is rudimentary and lacks structure.",
           "Basic": "A standardized value calculator is in place, but its adoption across teams is inconsistent. The calculator includes basic ROI metrics but lacks customization for specific.",
           "Advanced": "The value calculator is robust and includes advanced features, such as customization for different segments and detailed ROI metrics.",
-          "Leading": "The value calculator includes. ROI scenario modeling, real-time data inputs, and benchmarking against industry standards. Customers rely on it as a trusted resource for making."
+          "Leading": "The value calculator includes ROI scenario modeling, real-time data inputs, and benchmarking against industry standards. Customers rely on it as a trusted resource for making."
         }
       },
       {
@@ -358,7 +358,7 @@ window.assessmentData = [
           "None": "Unit economics are unclear and unproven, hindering growth decisions.",
           "Emerging": "The company has a basic understanding of unit economics, such as costs and desired engagement margins, but the engagements are not yet packaged optimally.",
           "Basic": "Unit economics are tracked consistently, but the focus is limited to a few metrics. Teams use them primarily for internal decision-making.",
-          "Advanced": "Unit economics are a core component of both internal strategy and customer discussions. Sales teams leverage these metrics to validate \"Outcomes\" and align solutions.",
+          "Advanced": "Unit economics are a core component of both internal strategy and customer discussions. Sales teams leverage these metrics to validate outcomes and align solutions.",
           "Leading": "The company is recognized as a market leader in leveraging unit economics. Metrics are predictive, customer-facing, and continuously optimized to reflect industry changes."
         }
       },
