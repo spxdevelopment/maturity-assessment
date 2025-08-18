@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Go‑To‑Market Maturity Assessment</title>
+  <style>
+    /* Core styling for the assessment app using SalesSparx palette */
+    :root {
+      /* Updated colour palette aligned to SalesSparx brand:
+         green as primary accent, orange as secondary highlight and soft greys for backgrounds */
+      --primary: #00A7B3; /* teal green from SalesSparx */
+      --secondary: #EB5C22; /* orange accent */
+      --dark-bg: #1F2933;
+      --light-bg: #ECEFF3; /* slightly darker grey background */
+      --card-bg: #FFFFFF; /* white for cards */
+      --card-border: #E5E7EB;
+      --text-color: #1F2933;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: var(--text-color);
+      background-color: var(--light-bg);
+      line-height: 1.5;
+    }
+
+    .page {
+      display: none;
+      /* Increase the width of the page container so that more of the screen is utilised on large displays. */
+      padding: 2rem;
+      /* Allow the pages to stretch wider on large screens while maintaining centred alignment */
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .page.active {
+      display: block;
+    }
+
+    /* Introduction page styling */
+    #intro-page {
+      /* Very light card with subtle shadow to ensure the content stands out without dominating the screen */
+      background: #F9FBFC;
+      color: var(--text-color);
+      border: 1px solid #E6E8EC;
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+    #intro-page h1 {
+      margin-top: 0;
+      font-size: 2rem;
+      color: var(--primary);
+    }
+    #intro-page p {
+      margin: 1rem 0;
+      color: var(--text-color);
+    }
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1rem;
+    }
+    .form-field label {
+      font-weight: bold;
+      margin-bottom: 0.25rem;
+      color: var(--text-color);
+    }
+    .form-field input {
+      padding: 0.5rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      /* Dark text on light inputs for contrast */
+      color: #1F2933;
+    }
+    button.primary {
+      padding: 0.6rem 1rem;
+      background-color: var(--primary);
+      border: none;
+      border-radius: 4px;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+    button.primary:hover {
+      background-color: #007a8a;
+    }
+    a {
+      color: var(--secondary);
+      text-decoration: underline;
+    }
+    /* Assessment page styling */
+    #assessment-page h2 {
+      margin-top: 0;
+      color: var(--primary);
+    }
+    .question-block {
+      margin-bottom: 1.5rem;
+    }
+    .question-title {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    .option-row {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 0.5rem;
+      overflow-x: auto;
+    }
+    .option {
+      flex: 1 1 calc(20% - 0.5rem);
+      text-align: center;
+      padding: 0.5rem;
+      border-radius: 4px;
+      border: 2px solid #D1D5DB;
+      cursor: pointer;
+      font-size: 0.9rem;
+      background-color: #FFFFFF;
+    }
+    .option.active {
+      border-color: var(--primary);
+      background-color: var(--primary);
+      color: #FFFFFF;
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2rem;
+    }
+    .nav-buttons button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .nav-buttons .prev {
+      background-color: #E5E7EB;
+      color: #374151;
+    }
+    .nav-buttons .next {
+      background-color: var(--primary);
+      color: white;
+    }
+    /* Results page styling */
+    #results-page h1 {
+      margin-top: 0;
+      color: var(--primary);
+    }
+    #participant-info {
+      margin-bottom: 1rem;
+    }
+    #summary-text {
+      font-style: italic;
+      margin-bottom: 1rem;
+    }
+    #radarCanvas {
+      width: 100%;
+      max-width: 600px;
+      height: 500px;
+      display: block;
+      margin: 0 auto;
+    }
+    #improvements {
+      margin-top: 1.5rem;
+    }
+    .improvement-category {
+      margin-bottom: 1rem;
+    }
+    .improvement-category h3 {
+      margin-bottom: 0.5rem;
+      color: var(--secondary);
+    }
+    .improvement-item {
+      margin-left: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    #cta {
+      margin-top: 2rem;
+      text-align: center;
+    }
+    #cta a {
+      color: var(--primary);
+      text-decoration: underline;
+      display: inline-block;
+      margin: 0.5rem;
+    }
+
+    /* Section cards to group results content */
+    .section-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    }
+
+    /* Styling for expandable improvement details */
+    details {
+      margin-bottom: 0.75rem;
+      background: #F8FAFC;
+      border: 1px solid #E5E7EB;
+      border-radius: 6px;
+      padding: 0.75rem;
+    }
+    details summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--primary);
+      list-style: none;
+    }
+    /* Add indicator arrows for expand/collapse */
+    details summary::before {
+      content: '\25BA'; /* right-pointing triangle */
+      display: inline-block;
+      margin-right: 0.5rem;
+      transform: rotate(0deg);
+      transition: transform 0.2s;
+    }
+    details[open] summary::before {
+      transform: rotate(90deg);
+    }
+
+    /* Modern table styling for improvement suggestions */
+    .improvements-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    .improvements-table th, .improvements-table td {
+      padding: 0.75rem;
+      border: 1px solid var(--card-border);
+      vertical-align: top;
+      font-size: 0.9rem;
+    }
+    .improvements-table th {
+      background: #F8FAFC;
+      color: var(--text-color);
+      text-align: left;
+      font-weight: 600;
+    }
+    .improvements-table tr:nth-child(even) {
+      background-color: #F9FAFD;
+    }
+    .improvements-table ul {
+      margin: 0;
+      padding-left: 1.25rem;
+    }
+
+    /* Styling for the hover instruction on the assessment page */
+    .hover-instruction {
+      font-weight: bold;
+      color: var(--secondary);
+      text-decoration: underline;
+      /* Ensure the hover tip uses the same size as the main instruction */
+      font-size: 1rem;
+      margin-top: 0.3rem;
+    }
+
+    /* Progress bar and stepper styling */
+    .progress-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .stepper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex: 1 1 auto;
+      position: relative;
+      margin-right: 1rem;
+    }
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      position: relative;
+      flex: 1 1 0;
+    }
+    .step .step-number {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      color: #ffffff;
+      background-color: #D1D5DB; /* default grey for upcoming */
+    }
+    .step .step-label {
+      margin-top: 0.25rem;
+      font-size: 0.7rem;
+      text-align: center;
+      line-height: 1.1;
+      color: var(--text-color);
+    }
+    /* connector line between steps */
+    .step::after {
+      content: '';
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      width: 100%;
+      height: 2px;
+      background-color: #D1D5DB;
+      z-index: -1;
+    }
+    .step:last-child::after {
+      display: none;
+    }
+    /* Completed and current step colours */
+    .step.completed .step-number {
+      background-color: var(--primary);
+    }
+    .step.current .step-number {
+      background-color: var(--secondary);
+    }
+    .step.completed::after {
+      background-color: var(--primary);
+    }
+    .step.current::after {
+      background-color: var(--secondary);
+    }
+    .progress-percentage {
+      min-width: 50px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: var(--secondary);
+      text-align: right;
+    }
+
+    /* Reduce spacing between paragraphs in the overall summary */
+    #overall-summary p {
+      margin: 0.3rem 0;
+    }
+
+    /* Logo styling */
+    .logo {
+      display: block;
+      max-width: 200px;
+      height: auto;
+      margin: 1.5rem auto 0;
+    }
+
+    /* Hide the FUSE container when not in use */
+    #fuse-container {
+      display: none;
+    }
+    @media (max-width: 600px) {
+      .option-row {
+        flex-wrap: wrap;
+      }
+      .option {
+        flex: 1 1 100%;
+      }
+      #radarCanvas {
+        height: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Introduction / capture details -->
+  <div id="intro-page" class="page active">
+    <h1>SalesSparx Go‑To‑Market Maturity Assessment</h1>
+    <p>Uncover the strengths and opportunities in your go‑to‑market strategy. In just a few minutes, you’ll assess your performance across seven critical categories, each rated from None (no established capability) to Leading (industry‑best practices). This assessment uses a five‑level scale:</p>
+    <ul style="margin-left:1.5rem;">
+      <li><strong>None (1)</strong> – No formal process in place.</li>
+      <li><strong>Emerging (2)</strong> – Early‑stage practices, limited consistency.</li>
+      <li><strong>Basic (3)</strong> – Defined processes, moderate adoption.</li>
+      <li><strong>Advanced (4)</strong> – Mature, optimized practices in place.</li>
+      <li><strong>Leading (5)</strong> – Proven, industry‑leading excellence.</li>
+    </ul>
+    <p>At the end, you’ll receive a personalised report with a visual maturity map, category‑specific recommendations, and actionable next steps to accelerate growth.</p>
+    <div class="form-field">
+      <label for="name">Name</label>
+      <input type="text" id="name" placeholder="Your name" />
+    </div>
+    <div class="form-field">
+      <label for="company">Company</label>
+      <input type="text" id="company" placeholder="Company name" />
+    </div>
+    <div class="form-field">
+      <label for="role">Role</label>
+      <input type="text" id="role" placeholder="Your role" />
+    </div>
+    <div class="form-field">
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="Email address" />
+    </div>
+    <button id="start-btn" class="primary" type="button">Start Assessment</button>
+    <p style="margin-top:1rem; font-size:0.9rem;">Already have admin access? <a href="#" id="admin-login-link">Admin Login</a></p>
+
+    <!-- No logo on the first page; logo appears on the results page only -->
+  </div>
+
+  <!-- Assessment pages (generated dynamically) -->
+    <div id="assessment-page" class="page">
+      <!-- Progress bar with stepper and percentage indicator -->
+      <div class="progress-wrapper">
+        <div id="category-stepper" class="stepper"></div>
+        <div id="progress-percentage" class="progress-percentage"></div>
+      </div>
+      <h2 id="category-title"></h2>
+      <p id="category-instructions"></p>
+      <div id="questions-container"></div>
+      <div class="nav-buttons">
+        <button class="prev" id="prev-btn">Back</button>
+        <button class="next" id="next-btn">Next</button>
+      </div>
+    </div>
+
+  <!-- Results page -->
+  <div id="results-page" class="page">
+    <h1>Go‑To‑Market Maturity Assessment Results</h1>
+    <!-- Participant info and summary -->
+    <div class="section-card">
+      <div id="participant-info"></div>
+      <p id="summary-text"></p>
+    </div>
+    <!-- Overall summary card showing average score and guidance -->
+    <div id="overall-summary" class="section-card"></div>
+    <!-- Radar chart display -->
+    <div class="section-card">
+      <canvas id="radarCanvas" width="600" height="500"></canvas>
+    </div>
+    <!-- Improvement suggestions -->
+    <div class="section-card">
+      <div id="improvements"></div>
+    </div>
+    <!-- FUSE graphic and explanation container -->
+    <div id="fuse-container" class="section-card"></div>
+    <!-- Call to action -->
+    <div class="section-card" id="cta">
+      <p>Ready to accelerate your growth? <a href="https://salessparx.com/light-your-sales-fuse/" target="_blank">Download our book</a> or <a href="mailto:success@salessparx.com">contact us</a> for a personalised consultation.</p>
+    </div>
+    <!-- Brand logo -->
+    <img class="logo" src="SalesSparx FINAL LOGO 3_wide.svg" alt="SalesSparx logo" />
+    <!-- Print button -->
+    <div style="display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:center; margin-top:1rem;">
+      <button id="print-btn" class="primary" type="button">Print Results</button>
+      <button id="pdf-btn" class="primary" type="button">Save as PDF</button>
+      <button id="restart-btn" class="primary" type="button">Restart</button>
+      <button id="back-btn" class="primary" type="button">Back</button>
+    </div>
+  </div>
+
+  <!-- Admin login page -->
+  <div id="admin-login-page" class="page">
+    <h1>Admin Login</h1>
+    <div class="form-field">
+      <label for="admin-user">Username</label>
+      <input type="text" id="admin-user" placeholder="Username" />
+    </div>
+    <div class="form-field">
+      <label for="admin-pass">Password</label>
+      <input type="password" id="admin-pass" placeholder="Password" />
+    </div>
+    <p id="admin-error" style="color:red;"></p>
+    <button id="admin-login-btn" class="primary" type="button">Login</button>
+  </div>
+
+  <!-- Admin dashboard page -->
+  <div id="admin-dashboard-page" class="page">
+    <h1>Admin Dashboard</h1>
+    <div style="overflow-x:auto;">
+      <table id="admin-table" style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr id="admin-header-row"></tr>
+        </thead>
+        <tbody id="admin-table-body"></tbody>
+      </table>
+    </div>
+    <button id="admin-logout-btn" class="primary" type="button" style="margin-top:1rem;">Logout</button>
+  </div>
+
+  <!-- Load full assessment data from external file -->
+  <!-- Load full assessment data from external file. The file must be kept in the same directory as this HTML. -->
+
+  <script id="assessment-data" type="application/json">[{"name": "Change Management", "subcategories": [{"name": "Organizational Readiness for Change", "descriptions": {"None": "No formal process or capability exists for organizational readiness for change, leading to inconsistent or limited outcomes.", "Emerging": "No formal process exists to manage GTM-related change Change is reactive, fragmented, and often seen as disruptive Limited awareness of GTM strategy across teams.", "Basic": "Limited awareness of the need for GTM change exists Planning happens in silos Team shifts are initiated but lack consistent cross-functional engagement.", "Advanced": "Structured GTM change processes in place Functional teams are aligned on timelines, deliverables, and dependencies Playbooks and transition plans are standardized.", "Leading": "Change initiatives are integrated into strategic GTM planning cycles Teams operate with agility, iterate based on feedback, and proactively address resistance to change."}}, {"name": "Leadership Alignment & Commitment", "descriptions": {"None": "No formal process or capability exists for leadership alignment & commitment, leading to inconsistent or limited outcomes.", "Emerging": "Leadership is not visibly aligned or engaged in GTM transformation Change lacks executive sponsorship or clear communication.", "Basic": "Some leaders express support for GTM changes but messaging is inconsistent There is limited accountability or follow-up on execution.", "Advanced": "Leadership actively sponsors GTM change initiatives They communicate vision clearly and reinforce change expectations in team interactions.", "Leading": "Leadership models change behaviors and drives alignment around GTM strategy Executive team tracks and supports change with structured governance."}}, {"name": "Change Capability & Infrastructure", "descriptions": {"None": "No formal process or capability exists for change capability & infrastructure, leading to inconsistent or limited outcomes.", "Emerging": "Limited dedicated roles or tools to manage GTM-related change Teams lack frameworks, resources, or guidance for execution.", "Basic": "GTM change roles or tools exist, but adoption is inconsistent.", "Advanced": "Defined change leaders support GTM change Tools, templates, and enablement plans are actively used across teams.", "Leading": "Robust change infrastructure in place with cross-functional buy-in Training, change readiness assessments, and GTM enablement plans are embedded into launch cycles."}}, {"name": "Change Culture & Adoption", "descriptions": {"None": "No formal process or capability exists for change culture & adoption, leading to inconsistent or limited outcomes.", "Emerging": "Teams show resistance or fatigue around GTM change Culture favors existing practices over innovation or agility.", "Basic": "Mixed receptiveness to GTM initiatives Some teams adopt changes but revert to old practices Feedback loops are rare.", "Advanced": "Culture supports cross-functional collaboration, experimentation, and GTM iteration Feedback is collected and acted upon.", "Leading": "High level of change agility across commercial, clinical, and product teams GTM evolution is seen as continuous improvement, not disruption."}}]}, {"name": "Delivery", "subcategories": [{"name": "Proven delivery capability", "descriptions": {"None": "No formal process or capability exists for proven delivery capability, leading to inconsistent or limited outcomes.", "Emerging": "Delivery processes are ad hoc and reactive, with limited documentation or standardization Teams often struggle to meet deadlines or client expectations due to a lack.", "Basic": "Delivery processes are documented and include standard operating procedures for routine tasks Teams are beginning to use project management tools to track progress but may.", "Advanced": "Delivery capabilities are highly reliable and adaptable, supported by data-driven insights and proactive resource planning Teams consistently meet or exceed client expectations, with well-documented workflows.", "Leading": "The organization is recognized as a leader in delivery excellence, leveraging AI-driven tools and continuous improvement practices to provide exceptional client experiences Delivery capabilities are."}}, {"name": "Defined skills/knowledge requirements", "descriptions": {"None": "No formal process or capability exists for defined skills/knowledge requirements, leading to inconsistent or limited outcomes.", "Emerging": "Teams lack a defined framework for the skills and knowledge required to deliver projects effectively Training is minimal, and skill gaps often lead to delays.", "Basic": "Skill requirements are defined, with limited training programs in place for foundational competencies Teams begin to specialize, but advanced skills such as project management or.", "Advanced": "Skills and knowledge requirements are well-defined and updated regularly to reflect evolving client needs and industry trends Teams participate in ongoing training programs and certifications.", "Leading": "The organization is a leader in skills and knowledge development, leveraging AI to predict future requirements and create targeted training programs Teams are recognized for."}}, {"name": "Defined training/certification program", "descriptions": {"None": "No formal process or capability exists for defined training/certification program, leading to inconsistent or limited outcomes.", "Emerging": "Training programs are informal or non-existent, with teams relying on on-the-job learning to develop skills Certifications are not prioritized, leading to inconsistencies in delivery quality.", "Basic": "Training programs are structured and cover foundational skills, such as technical competencies and client communication Certifications are encouraged but not systematically integrated into customer success.", "Advanced": "Training and certification programs are comprehensive, mandatory, and regularly updated to reflect industry trends Teams participate in continuous learning initiatives, ensuring readiness to meet evolving.", "Leading": "The organization is recognized as a leader in training and certification, using AI-driven insights to anticipate future requirements and design innovative programs Training is fully."}}, {"name": "Account management upselling incentives", "descriptions": {"None": "No formal process or capability exists for account management upselling incentives, leading to inconsistent or limited outcomes.", "Emerging": "Upselling efforts are ad hoc, with account managers lacking clear incentives or frameworks to identify and pursue upsell opportunities The focus is primarily on maintaining.", "Basic": "Upselling incentives are partially defined, focusing on a combination of financial rewards and recognition for account managers who achieve upsell targets Teams are using tools.", "Advanced": "The organization has a robust upselling framework supported by data-driven insights and targeted incentives Account managers collaborate with sales and delivery teams to identify upsell.", "Leading": "The organization leads the industry in account management and upselling, using AI-driven tools to predict opportunities and deliver personalized recommendations Incentives are seamlessly integrated with."}}, {"name": "Defined project managment protocols", "descriptions": {"None": "No formal process or capability exists for defined project managment protocols, leading to inconsistent or limited outcomes.", "Emerging": "Project management protocols are informal, relying on individual team members to manage tasks without clear processes or accountability Projects often face delays or scope creep.", "Basic": "Project management protocols are defined, with teams using standard tools and templates for planning and execution Processes include defined roles, timelines, and escalation paths, but.", "Advanced": "Project management protocols are fully documented and supported by advanced tools and methodologies Teams use analytics to track progress, identify risks, and optimize workflows Processes.", "Leading": "The organization is a leader in project management, using AI-driven insights and continuous improvement practices to deliver exceptional outcomes Protocols are seamlessly integrated with broader."}}, {"name": "Retention/customer satisfaction", "descriptions": {"None": "No formal process or capability exists for retention/customer satisfaction, leading to inconsistent or limited outcomes.", "Emerging": "The company lacks a structured approach to tracking or improving customer retention and satisfaction Feedback mechanisms are informal, and efforts to address customer issues are.", "Basic": "Retention and satisfaction processes are defined, with teams tracking basic metrics such as churn rate, customer satisfaction scores, or renewal rates The company begins leveraging.", "Advanced": "Retention and satisfaction strategies are robust, supported by advanced tools and analytics to monitor customer health and predict churn risks Teams use proactive outreach to.", "Leading": "The company is an industry leader in customer retention and satisfaction, using AI-driven tools to deliver highly personalized, proactive experiences Retention and satisfaction strategies are."}}, {"name": "Defined account managment process", "descriptions": {"None": "No formal process or capability exists for defined account managment process, leading to inconsistent or limited outcomes.", "Emerging": "Account management processes are informal or inconsistent, with limited documentation or alignment across teams Account managers focus primarily on maintaining the status quo rather than.", "Basic": "The account management process is defined, with clear roles and responsibilities for managing accounts Teams use basic CRM tools to track account activities, but cross-functional.", "Advanced": "Account management processes are fully documented and supported by advanced tools and analytics Teams leverage customer insights to develop tailored strategies that align with client.", "Leading": "The account management process is recognized as an industry benchmark, using AI-driven tools and continuous improvement practices to deliver exceptional outcomes Teams co-create value with."}}]}, {"name": "Enablement Technology", "subcategories": [{"name": "Marketing automation", "descriptions": {"None": "No formal process or capability exists for marketing automation, leading to inconsistent or limited outcomes.", "Emerging": "Marketing automation tools are either absent or underutilized, with teams relying on manual processes for lead generation, email campaigns, and customer segmentation There is limited.", "Basic": "Marketing automation tools are in place and support basic functions such as email marketing, lead scoring, and customer segmentation However, workflows are static, and teams.", "Advanced": "Marketing automation is fully integrated with CRM and analytics platforms, enabling dynamic workflows and personalized content delivery Teams use data-driven insights to continuously refine campaigns.", "Leading": "The organization is a leader in marketing automation, using AI and advanced analytics to deliver real-time, personalized campaigns at scale Automation tools are seamlessly integrated."}}, {"name": "Customer relationship management", "descriptions": {"None": "No formal process or capability exists for customer relationship management, leading to inconsistent or limited outcomes.", "Emerging": "CRM tools are either absent or used inconsistently, with teams relying on manual processes to manage customer interactions and data There is limited visibility into.", "Basic": "CRM tools are in place and used to manage customer data, track pipeline progress, and support sales activities However, integration with other systems is limited.", "Advanced": "CRM systems are fully integrated with other business tools, providing a comprehensive view of customer interactions and enabling data-driven decision-making Teams use advanced analytics to.", "Leading": "The organization is a benchmark for CRM excellence, using AI and real-time data to deliver personalized experiences and drive customer success CRM systems are seamlessly."}}, {"name": "Learning management system", "descriptions": {"None": "No formal process or capability exists for learning management system, leading to inconsistent or limited outcomes.", "Emerging": "Training and knowledge-sharing processes are informal, with no centralized platform for delivering or tracking learning content Teams rely on ad hoc training sessions, resulting in.", "Basic": "An LMS is in place with structured training paths for core competencies Teams use the system for onboarding and role-specific training, but there is limited.", "Advanced": "The LMS is integrated with other systems, such as CRM and project management tools, to provide a seamless learning experience Training is highly interactive and.", "Leading": "The LMS is a strategic asset, leveraging AI and predictive analytics to anticipate future training needs and deliver real-time, personalized learning experiences The organization is."}}, {"name": "Project management system", "descriptions": {"None": "No formal process or capability exists for project management system, leading to inconsistent or limited outcomes.", "Emerging": "Project management processes are manual, relying on spreadsheets or email to coordinate tasks Teams face frequent delays and miscommunications due to a lack of centralized.", "Basic": "A project management system is in place, supporting core functions such as task assignments, timelines, and resource tracking Teams use the system to coordinate efforts.", "Advanced": "The project management system is integrated with other tools, such as CRM and LMS, to provide end-to-end visibility into project workflows Teams use advanced analytics.", "Leading": "The project management system is a benchmark for the industry, using AI and real-time data to deliver exceptional outcomes Teams seamlessly coordinate across departments and."}}, {"name": "Lead generation tools", "descriptions": {"None": "No formal process or capability exists for lead generation tools, leading to inconsistent or limited outcomes.", "Emerging": "Lead generation tools are either absent or used inconsistently, with teams relying on manual methods such as cold calling or basic email campaigns There is.", "Basic": "Teams use lead generation tools to capture and qualify leads, such as email automation platforms or basic CRM features Lead scoring models are in place.", "Advanced": "Lead generation tools are fully integrated with marketing automation and CRM systems, enabling seamless data sharing and advanced analytics Teams use AI-driven insights to identify.", "Leading": "The organization is a leader in lead generation, using AI-driven tools to continuously optimize strategies and deliver exceptional results Lead generation efforts are seamlessly integrated."}}]}, {"name": "Marketing", "subcategories": [{"name": "Market segmentation and value proposition aligned", "descriptions": {"None": "No formal process or capability exists for market segmentation and value proposition aligned, leading to inconsistent or limited outcomes.", "Emerging": "The company lacks a structured approach to market segmentation and buying personas Value propositions are loosely applied across segments.", "Basic": "Market segmentation is developed, focusing on high-level categories by segment or geography Teams create initial value propositions to align with pain points for each persona.", "Advanced": "The company uses data-driven segmentation to identify distinct customer groups, tailoring value propositions to align with specific challenges and goals Messaging consistently resonates across segments.", "Leading": "Market segmentation is deeply embedded in the company’s strategy, supported by predictive analytics and AI-driven insights Teams dynamically adjust value propositions to reflect segment-specific changes."}}, {"name": "Ideal customer profiles and personas", "descriptions": {"None": "No formal process or capability exists for ideal customer profiles and personas, leading to inconsistent or limited outcomes.", "Emerging": "Customer profiles are generally defined and rely on surface-level attributes, such as company size or revenue.", "Basic": "All aspects of the 4 Rights have been addressed Customer profiles include more detailed attributes, such as pain points and buying behaviors Teams use profiles.", "Advanced": "Ideal customer profiles and personas are robust and data-driven, incorporating insights from VOC programs and market research Teams use these tools consistently to tailor engagement.", "Leading": "Customer profiles and personas are recognized as benchmarks in the industry, supported by advanced analytics and continuous feedback loops Teams personalize engagements at scale."}}, {"name": "Structured Lead Generation Process", "descriptions": {"None": "No formal process or capability exists for structured lead generation process, leading to inconsistent or limited outcomes.", "Emerging": "Lead generation efforts are ad hoc and rely heavily on outbound tactics such as cold calling and close relationsips Teams lack formalized processes or tools.", "Basic": "Lead generation processes are defined, focusing on inbound tactics like email campaigns and website traffic However, lead scoring is limited, lead gen tactics are not.", "Advanced": "Lead generation processes are fully automated and integrated with CRM systems Teams consistently capture, qualify, and nurture leads, driving significant pipeline growth.", "Leading": "The company is recognized as a leader in lead generation, using advanced tools and analytics to continuously optimize campaigns Lead generation seamlessly supports sales efforts."}}, {"name": "Compelling story-based branding/messaging across channels", "descriptions": {"None": "No formal process or capability exists for compelling story-based branding/messaging across channels, leading to inconsistent or limited outcomes.", "Emerging": "Messaging is inconsistent across channels, lacking a unified narrative or emotional resonance Teams focus on product features rather than the customer’s transformation journey.", "Basic": "Messaging is more consistent, with a clear narrative spanning major channels (eg, website, email) It incorporates some emotional appeal, but lacks personalization.", "Advanced": "The company delivers cohesive, emotionally resonant messaging across all channels, emphasizing customer success and transformation Messaging integrates seamlessly into the sales process.", "Leading": "The company’s storytelling approach is a market benchmark, leveraging real-time insights to personalize messaging and create deeper customer connections."}}, {"name": "Credibility building assets (client logos, case studies, testimonials, endorsements, certifications)", "descriptions": {"None": "No formal process or capability exists for credibility building assets (client logos, case studies, testimonials, endorsements, certifications), leading to inconsistent or limited outcomes.", "Emerging": "The company lacks a structured approach to creating and showcasing credibility assets Client logos and testimonials are sparse, and case study content is limited.", "Basic": "The company has a growing library of credibility assets but lacks diversity in segments or use cases Assets are consistently leveraged across sales and marketing.", "Advanced": "Credibility assets are robust, diverse, and actively used across all marketing and sales channels Teams use assets strategically to address objections and build trust during.", "Leading": "The company’s credibility assets are widely recognized and referenced in the industry Customers view the company as a trusted authority."}}, {"name": "Website optimized for lead generation  (SEO, content)", "descriptions": {"None": "No formal process or capability exists for website optimized for lead generation (seo, content), leading to inconsistent or limited outcomes.", "Emerging": "The website serves as a basic informational hub with limited functionality for capturing leads Content is sparse and lacks optimization for search engines.", "Basic": "The website includes foundational lead generation tools, such as landing pages and gated content, but struggles to drive significant traffic or engagement.", "Advanced": "The website is a central hub for lead generation, featuring dynamic content, advanced SEO strategies, and interactive tools Teams use analytics to optimize performance.", "Leading": "The website is a recognized benchmark for lead generation, leveraging cutting-edge technology and personalization to engage visitors and convert leads at scale."}}, {"name": "Market awareness", "descriptions": {"None": "No formal process or capability exists for market awareness, leading to inconsistent or limited outcomes.", "Emerging": "The company has minimal visibility in the market and relies solely on organic efforts or word-of-mouth to attract attention Awareness initiatives lack a unified strategy.", "Basic": "Market awareness has grown in some segments through consistent efforts on social media, basic PR, and event participation Messaging is cohesive but still lacks strong.", "Advanced": "The company employs multi-channel campaigns that are strategically aligned with its target audience Messaging highlights the company’s unique value proposition and is reinforced through PR.", "Leading": "The company is a recognized leader in its industry, dominating share of voice through innovative campaigns, consistent thought leadership, and a strong presence across all."}}, {"name": "Paid advertising (PPC, social, industry pubs, syndication)", "descriptions": {"None": "No formal process or capability exists for paid advertising (ppc, social, industry pubs, syndication), leading to inconsistent or limited outcomes.", "Emerging": "Paid advertising efforts are sporadic and lack a cohesive strategy Campaigns rely on basic targeting options and focus solely on generating clicks rather than building.", "Basic": "Paid advertising is more structured, focusing on a small set of platforms such as Google Ads or LinkedIn Campaigns target specific customer profiles with tailored.", "Advanced": "Advertising is fully integrated into the broader marketing strategy, leveraging advanced targeting options, multi-platform campaigns, and in-depth analytics Teams use data-driven insights to optimize spend.", "Leading": "The company is a leader in paid advertising, using AI-driven tools to deliver hyper-personalized campaigns at scale Real-time analytics inform continuous optimization, ensuring maximum ROI."}}, {"name": "Building and nurturing pre SQL targets (with emails, LinkedIn etc)", "descriptions": {"None": "No formal process or capability exists for building and nurturing pre sql targets (with emails, linkedin etc), leading to inconsistent or limited outcomes.", "Emerging": "Efforts to engage pre-SQL targets are inconsistent, relying on manual processes or generic outreach such as cold emails or LinkedIn messages Teams lack clear workflows.", "Basic": "Nurturing efforts are adhoc vs structured initiatives, with the implementation of limited automated workflows and segmentation based on basic demographic Teams deploy multi-step email campaigns.", "Advanced": "Nurturing is highly personalized and leverages data from multiple touchpoints to create meaningful, tailored content Teams use advanced tools, such as marketing automation platforms integrated.", "Leading": "The company leads the industry in pre-SQL nurturing, using AI-driven insights to predict lead behavior and deliver hyper-personalized content at scale Nurturing is fully aligned."}}, {"name": "Nurture existing clients (company vs sales directed)", "descriptions": {"None": "No formal process or capability exists for nurture existing clients (company vs sales directed), leading to inconsistent or limited outcomes.", "Emerging": "Client nurturing efforts are inconsistent and reactive, focused primarily on resolving immediate issues or fulfilling transactional needs Responsibility for engagement rests solely with individual sales.", "Basic": "Client nurturing is supported by an account management or customer success team, and it is adhoc and reactive, with little or no leverage created across.", "Advanced": "Client nurturing is proactive, data-driven, and tailored to individual client needs and goals Teams use analytics to identify upsell or cross-sell opportunities and conduct regular.", "Leading": "The company is recognized as an industry leader in client nurturing, delivering exceptional, personalized experiences that foster advocacy and long-term growth Engagement strategies are fully."}}, {"name": "Sales enablement materials (Sales decks, competitor battlecard, one pagers, etc)", "descriptions": {"None": "No formal process or capability exists for sales enablement materials (sales decks, competitor battlecard, one pagers, etc), leading to inconsistent or limited outcomes.", "Emerging": "Sales teams operate with minimal support, using outdated or incomplete materials that fail to address customer pain points or articulate the company’s value proposition effectively.", "Basic": "The buyer journey has been defined and aligned with the Shared Vision Sales Process The minimum necessary sales enablement materials have been developed to support.", "Advanced": "Sales materials are robust, data-driven, and updated regularly to reflect evolving customer needs and market conditions Teams leverage these materials to address objections, build credibility.", "Leading": "Sales enablement materials are a competitive differentiator, blending advanced technology, storytelling, and data insights to deliver exceptional impact Materials are personalized in real-time using AI."}}, {"name": "Corporate Intro Deck", "descriptions": {"None": "No formal process or capability exists for corporate intro deck, leading to inconsistent or limited outcomes.", "Emerging": "The company lacks a cohesive corporate intro deck, relying on scattered materials or verbal explanations to introduce itself to prospects Messaging is inconsistent, failing to.", "Basic": "The corporate intro deck is well-structured and provides a clear overview of the company’s offerings, target audience, and value proposition to support the \"12 Sales.", "Advanced": "The corporate intro deck is visually compelling, data-driven, and integrates storytelling elements that resonate with different buyer personas It effectively positions the company as a.", "Leading": "The corporate intro deck is a market-leading resource that seamlessly blends advanced design, storytelling, and analytics It is highly customizable and acts as a central."}}, {"name": "Proposal", "descriptions": {"None": "No formal process or capability exists for proposal, leading to inconsistent or limited outcomes.", "Emerging": "Proposals are inconsistent and lack a standardized structure or format They focus heavily on product features rather than client-specific solutions, resulting in low conversion rates.", "Basic": "Proposals are structured and consistent, outlining the company’s offerings, pricing, and timelines They incorporate some level of customization but still rely on generic templates that.", "Advanced": "Proposals are highly customized, leveraging data and storytelling to demonstrate the company’s unique value proposition They address client-specific challenges and include detailed ROI calculations and.", "Leading": "The company’s proposals are widely regarded as best-in-class, combining advanced design, personalized insights, and predictive analytics to create compelling narratives Proposals are seamlessly integrated into."}}, {"name": "Referral program/structure", "descriptions": {"None": "No formal process or capability exists for referral program/structure, leading to inconsistent or limited outcomes.", "Emerging": "The company lacks a formal referral program, relying on ad hoc recommendations from existing clients There are no structured incentives or processes to encourage referrals.", "Basic": "A referral program is in place, offering rewards such as discounts, credits, or gift cards for successful referrals However, the program is not actively promoted.", "Advanced": "The referral program is well-established, featuring tiered rewards, exclusive benefits, and regular promotions to encourage participation It is actively promoted through multiple channels, resulting in.", "Leading": "The referral program is a best-in-class initiative, seamlessly integrated into the customer journey It leverages advanced tools to personalize rewards and uses predictive analytics to."}}, {"name": "Defined marketing metrics", "descriptions": {"None": "No formal process or capability exists for defined marketing metrics, leading to inconsistent or limited outcomes.", "Emerging": "Marketing metrics are either undefined or inconsistently tracked, with teams focusing on vanity metrics such as social media likes or basic website traffic There is.", "Basic": "Metrics are partially defined and include core KPIs such as conversion rates, cost per lead, and website engagement Teams begin to connect marketing activities to.", "Advanced": "Marketing metrics are comprehensive and include both leading and lagging indicators, such as customer acquisition cost (CAC), customer lifetime value (CLV), and campaign ROI Teams.", "Leading": "The company is a leader in marketing analytics, leveraging real-time data and AI-driven insights to optimize campaigns continuously Metrics are fully aligned with business objectives."}}, {"name": "Marketing investment is aligned with sales/revenue objectives", "descriptions": {"None": "No formal process or capability exists for marketing investment is aligned with sales/revenue objectives, leading to inconsistent or limited outcomes.", "Emerging": "Marketing investments are made reactively, without clear alignment to sales or revenue goals Budgets are allocated based on historical spending patterns or immediate needs, resulting.", "Basic": "Marketing budgets are partially aligned with revenue targets, with investments focused on lead generation and campaign performance Teams begin tracking ROI for key initiatives but.", "Advanced": "Marketing investments are fully aligned with sales and revenue objectives, supported by robust ROI tracking and advanced analytics Budgets are dynamic and adjusted based on.", "Leading": "The company is a benchmark for aligning marketing investments with sales and revenue goals, leveraging AI-driven insights and dynamic budgeting to optimize spend continuously Marketing."}}]}, {"name": "Offering", "subcategories": [{"name": "Address full solution lifecycle", "descriptions": {"None": "No formal process or capability exists for address full solution lifecycle, leading to inconsistent or limited outcomes.", "Emerging": "Support is limited to one phase of the customer lifecycle (eg, advisory or implementation), with minimal follow-through Teams struggle to address \"The World Has Changed\".", "Basic": "The company provides support across multiple lifecycle stages but lacks a standardized methodology Customer experience varies depending on the team or project.", "Advanced": "Teams deliver seamless support across the lifecycle using proven methodologies \"Trusted\" conversations emphasize the organization’s credibility and authority in delivering long-term value.", "Leading": "The company is a recognized leader in lifecycle delivery, using innovative tools and strategies to optimize outcomes Competitors benchmark against the organization’s capabilities."}}, {"name": "Well defined solution delivery methodology", "descriptions": {"None": "No formal process or capability exists for well defined solution delivery methodology, leading to inconsistent or limited outcomes.", "Emerging": "The organization lacks a formal methodology for delivering solutions Teams rely on ad hoc processes, leading to inconsistent results and reduced customer satisfaction.", "Basic": "A methodology is in place and includes basic steps for planning, execution, and review but lacks integration with customer-specific goals.", "Advanced": "The methodology is robust, with detailed steps that address customer needs at every stage of the lifecycle Teams use it consistently, integrating it with CRM.", "Leading": "The organization’s methodology is a competitive differentiator, recognized as a best practice in the industry It includes advanced tools, templates, and resources to optimize delivery."}}, {"name": "Proven solution scalabiliy", "descriptions": {"None": "No formal process or capability exists for proven solution scalabiliy, leading to inconsistent or limited outcomes.", "Emerging": "The company struggles to scale its offerings due to resource constraints and inconsistent processes Scalability is reactive rather than strategic, leading to inefficiencies.", "Basic": "Initial steps toward scalability are in place, including standardized processes and increased resource allocation Teams can scale offerings in select markets but struggle with broader.", "Advanced": "Offerings are fully scalable, supported by robust processes and tools that enable growth across multiple markets and customer segments Teams proactively plan for scalability in.", "Leading": "The company is a recognized leader in scalability, with offerings that adapt seamlessly to changing customer and market demands Scalability is integrated into the value."}}, {"name": "Solution Roadmap is driven by voice of the customer (VOC)", "descriptions": {"None": "No formal process or capability exists for solution roadmap is driven by voice of the customer (voc), leading to inconsistent or limited outcomes.", "Emerging": "The company collects customer feedback inconsistently and lacks a structured process for integrating insights into product or service development Feedback is anecdotal and reactive rather.", "Basic": "The company has established VOC processes but lacks consistency in analyzing and acting on the data Teams use customer insights primarily for addressing complaints rather.", "Advanced": "VOC is a core component of the company’s strategy, with structured processes for gathering, analyzing, and applying customer feedback across the organization Teams proactively use.", "Leading": "The company is recognized as a leader in VOC-driven innovation, using advanced tools and real-time feedback to continuously improve and personalize offerings VOC insights are."}}, {"name": "Key referencable clients", "descriptions": {"None": "No formal process or capability exists for key referencable clients, leading to inconsistent or limited outcomes.", "Emerging": "The company has few or no referenceable clients and struggles to secure testimonials or case studies Existing clients are reluctant to advocate publicly due to.", "Basic": "The company has a small pool of referenceable clients but lacks diversity in segments or geographies Testimonials and case studies are used consistently in sales.", "Advanced": "The company has a robust portfolio of referenceable clients across target segments and markets Teams actively use testimonials and case studies to build credibility and.", "Leading": "The company is recognized as an industry leader with a highly engaged client advocacy program Referenceable clients are actively involved in co-marketing and co-innovation initiatives."}}, {"name": "Pricing Strategy", "descriptions": {"None": "No formal process or capability exists for pricing strategy, leading to inconsistent or limited outcomes.", "Emerging": "The company lacks a clear pricing strategy and relies on ad hoc approaches to set prices Pricing discussions often focus on cost rather than value.", "Basic": "A basic pricing strategy is in place, and it is based on value Discounting is common and a result of competitive dynamics rather than business.", "Advanced": "Pricing strategy is dynamic and value-driven, incorporating customer-specific insights and market conditions Teams consistently use pricing tools to articulate value and capture margins.", "Leading": "The company’s pricing strategy is a competitive advantage, leveraging advanced tools and market intelligence to optimize value capture Pricing is seamlessly integrated into the value."}}, {"name": "Solution Development Roadmap", "descriptions": {"None": "No formal process or capability exists for solution development roadmap, leading to inconsistent or limited outcomes.", "Emerging": "The solution development process is reactive, with no formal roadmap or strategic plan in place Teams address customer needs on an ad hoc basis, leading.", "Basic": "A solution development roadmap exists but is limited in scope and primarily focused on short-term goals Customer feedback is occasionally considered, but the roadmap is.", "Advanced": "The solution development roadmap is well-defined and integrates customer feedback, market trends, and competitive analysis The roadmap includes both short-term deliverables and long-term strategic goals.", "Leading": "The solution development roadmap is a benchmark for the industry, using AI-driven insights and continuous improvement practices to deliver exceptional outcomes The roadmap is dynamic."}}]}, {"name": "Sales", "subcategories": [{"name": "Defined sales process", "descriptions": {"None": "No formal process or capability exists for defined sales process, leading to inconsistent or limited outcomes.", "Emerging": "The sales process is informal and varies widely across teams, relying on individual effort rather than standardized steps Teams lack a clear understanding of the.", "Basic": "The sales process is documented and includes clearly defined stages, supported by basic tools and templates Teams follow consistent steps, such as qualification, discovery analysis.", "Advanced": "The sales process is fully optimized, leveraging data-driven insights and advanced tools to adapt to buyer behaviors Teams regularly analyze performance metrics to refine strategies.", "Leading": "The company is recognized as a leader in sales process management, using AI-driven tools and continuous improvement practices to deliver personalized, scalable solutions Sales strategies."}}, {"name": "Effective distribution model", "descriptions": {"None": "No formal process or capability exists for effective distribution model, leading to inconsistent or limited outcomes.", "Emerging": "The company lacks a defined distribution model, relying on ad hoc or opportunistic methods to reach customers Channels are underutilized, and there is no clear.", "Basic": "The distribution model includes a mix of direct and indirect channels, with basic strategies for managing each Teams begin to define roles and responsibilities for.", "Advanced": "The distribution model is well-defined and optimized, with advanced tools and analytics to track performance across channels Teams leverage insights to refine channel strategies and.", "Leading": "The company’s distribution model is a benchmark for the industry, using AI-driven insights and advanced collaboration tools to deliver personalized, efficient solutions at scale Channels."}}, {"name": "Sales organization is aligned with overall business strategy.", "descriptions": {"None": "No formal process or capability exists for sales organization is aligned with overall business strategy, leading to inconsistent or limited outcomes.", "Emerging": "The sales organization is loosely structured, with unclear roles and responsibilities Teams operate in silos, leading to inconsistent practices and overlapping efforts There is limited.", "Basic": "The sales organization has a defined structure with clear roles, responsibilities, and reporting lines Teams begin to use standardized tools and processes but lack advanced.", "Advanced": "The sales organization is highly specialized, with dedicated roles for account management, business development, and customer success Teams collaborate closely, leveraging advanced tools and data.", "Leading": "The sales organization is a model of excellence, integrating advanced specialization, seamless collaboration, and AI-driven insights to achieve optimal performance Teams are empowered to adapt."}}, {"name": "Defined sales incentive", "descriptions": {"None": "No formal process or capability exists for defined sales incentive, leading to inconsistent or limited outcomes.", "Emerging": "Sales incentive structures are undefined or inconsistent, leading to confusion among teams about performance expectations and rewards Incentives are often arbitrary or focused solely on.", "Basic": "A standardized sales incentive plan is in place, with clear guidelines on how rewards are earned Incentives focus primarily on individual performance metrics, such as.", "Advanced": "Sales incentives are data-driven and include multiple components, such as individual performance, team collaboration, and customer outcomes Plans are reviewed regularly to ensure alignment with.", "Leading": "The sales incentive program is industry-leading, leveraging AI to dynamically adjust rewards based on performance trends and market dynamics Incentives are fully aligned with organizational."}}, {"name": "Oganization-wide sales culture", "descriptions": {"None": "No formal process or capability exists for oganization-wide sales culture, leading to inconsistent or limited outcomes.", "Emerging": "The organization lacks a cohesive sales culture, with little alignment between sales and other departments Sales efforts are viewed as isolated transactions rather than part.", "Basic": "A sales culture is emerging, supported by regular recognition programs and improved collaboration between sales and other departments Teams share insights more consistently, but alignment.", "Advanced": "Sales is seen as a core driver of organizational success, with strong alignment between sales, marketing, and customer success teams Recognition programs are formalized, and.", "Leading": "The organization has a world-class sales culture, characterized by seamless collaboration, continuous learning, and a shared commitment to customer success Sales achievements are celebrated organization-wide."}}, {"name": "Defined sales competencies", "descriptions": {"None": "No formal process or capability exists for defined sales competencies, leading to inconsistent or limited outcomes.", "Emerging": "Sales competencies are undefined, with teams relying on individual skills and experience rather than standardized practices Training is minimal or nonexistent, leading to inconsistent performance.", "Basic": "A competency framework is in place, outlining essential skills for sales roles Teams participate in regular coaching sessions, and managers provide feedback to improve performance.", "Advanced": "Sales competencies are robust and data-driven, covering a wide range of skills, including advanced techniques such as strategic account management and customer storytelling Teams receive.", "Leading": "The organization is recognized as a leader in sales competency development, leveraging advanced tools and continuous improvement practices to maintain peak performance Competencies are fully."}}, {"name": "Well-defined roles and responsibilities", "descriptions": {"None": "No formal process or capability exists for well-defined roles and responsibilities, leading to inconsistent or limited outcomes.", "Emerging": "Roles and responsibilities within the sales team lack structure, leading to inefficiencies among team members Sales reps often juggle multiple tasks beyond their level of.", "Basic": "Roles and responsibilities are documented and communicated, with defined job descriptions for most positions Teams follow standardized processes, but there is limited specialization, and overlaps.", "Advanced": "Roles are highly specialized and structured to support complex sales processes, with clear boundaries and collaboration protocols Teams leverage role-specific KPIs to monitor performance and.", "Leading": "The organization is a model of excellence in role definition, using AI and data-driven insights to continuously optimize team structure Roles are seamlessly integrated into."}}, {"name": "Sales leadership experience", "descriptions": {"None": "No formal process or capability exists for sales leadership experience, leading to inconsistent or limited outcomes.", "Emerging": "Sales leadership is inexperienced or lacks strategic focus, with limited ability to guide teams effectively Leaders primarily focus on day-to-day operations rather than long-term planning.", "Basic": "Sales leaders have moderate experience and are focused on operational efficiency and meeting targets They begin to implement performance metrics and foster team collaboration but.", "Advanced": "Sales leadership is highly experienced and focuses on driving both operational excellence and strategic growth Leaders consistently mentor their teams, foster collaboration, and use data-driven.", "Leading": "The organization’s sales leadership is widely recognized as industry-leading, driving transformational outcomes for the company and its customers Leaders leverage AI and advanced tools to."}}, {"name": "Sales team experience", "descriptions": {"None": "No formal process or capability exists for sales team experience, leading to inconsistent or limited outcomes.", "Emerging": "The sales team has limited experience, with many members new to their roles or the industry Training is minimal, and teams rely heavily on trial-and-error.", "Basic": "The team has moderate experience, with a mix of junior and senior members Training programs are in place, but they are not fully integrated into.", "Advanced": "The sales team is highly experienced, with well-rounded skills and deep knowledge of the industry Training programs are comprehensive and data-driven, supporting continuous improvement and.", "Leading": "The sales team is recognized as an industry leader, leveraging deep expertise and advanced tools to deliver exceptional results Team members are continuously upskilled through."}}, {"name": "Hiring process", "descriptions": {"None": "No formal process or capability exists for hiring process, leading to inconsistent or limited outcomes.", "Emerging": "The hiring process is informal, lacking a structured approach to sourcing, evaluating, or onboarding new talent Recruitment focuses primarily on filling positions quickly, often neglecting.", "Basic": "The hiring process includes defined stages, such as sourcing, interviewing, and onboarding, but lacks robust evaluation tools or criteria for assessing long-term fit Recruitment efforts.", "Advanced": "The hiring process is data-driven and includes advanced tools for sourcing, evaluating, and onboarding candidates Recruitment focuses on both technical skills and cultural fit, ensuring.", "Leading": "The hiring process is a benchmark for the industry, leveraging AI, predictive analytics, and continuous feedback to attract and retain top talent The process seamlessly."}}, {"name": "Defined metrics", "descriptions": {"None": "No formal process or capability exists for defined metrics, leading to inconsistent or limited outcomes.", "Emerging": "Sales metrics are undefined or inconsistently tracked, with teams relying on anecdotal evidence or basic activity data such as call volume There is no clear.", "Basic": "Metrics are partially defined and focus on core KPIs, such as revenue targets, average deal size, and win rates Teams track performance regularly but may.", "Advanced": "Metrics are comprehensive and include both leading and lagging indicators, such as customer acquisition cost (CAC), lifetime value (LTV), and forecast accuracy Teams use advanced.", "Leading": "The organization is a leader in sales analytics, using real-time data and AI-driven insights to continuously optimize metrics Metrics are fully integrated into decision-making processes."}}, {"name": "Sales investment is aligned with sales/revenue objectives", "descriptions": {"None": "No formal process or capability exists for sales investment is aligned with sales/revenue objectives, leading to inconsistent or limited outcomes.", "Emerging": "Sales investments are reactive and lack alignment with sales or revenue goals Budgets are allocated based on past spending patterns rather than strategic priorities, resulting.", "Basic": "Sales budgets are aligned with sales and revenue objectives, focusing on core investments such as compensation, prospecting, travel, and proposal/e-sign tools.", "Advanced": "Sales investments are fully aligned with sales and revenue goals, supported by advanced analytics and ROI tracking Budgets are dynamic and adjusted based on performance.", "Leading": "The company is a benchmark for aligning marketing investments with sales and revenue objectives, using real-time data to optimize resource allocation Marketing and sales operate."}}]}, {"name": "Value Proposition", "subcategories": [{"name": "Proven economic value proposition", "descriptions": {"None": "No formal process or capability exists for proven economic value proposition, leading to inconsistent or limited outcomes.", "Emerging": "Metrics have been identified but measurable economic benefits are not clear The concept of a value calculator is rudimentary and lacks structure Teams rely on.", "Basic": "A standardized value calculator is in place, but its adoption across teams is inconsistent The calculator includes basic ROI metrics but lacks customization for specific.", "Advanced": "The value calculator is robust and includes advanced features, such as customization for different segments and detailed ROI metrics Teams use it consistently, and customers.", "Leading": "The value calculator includes ROI scneario modeling, real-time data inputs, and benchmarking against industry standards Customers rely on it as a trusted resource for making."}}, {"name": "3 Whys answered", "descriptions": {"None": "No formal process or capability exists for 3 whys answered, leading to inconsistent or limited outcomes.", "Emerging": "Teams have a limited ability to articulate “Why change”, “Why now”, and “Why us” Messaging is fragmented and inconsistent across the organization There is no.", "Basic": "The “3 Whys” are fully addressed during customer interactions but lack tailoring and alignment with buyer priorities Teams are starting to use the framework consistently.", "Advanced": "Teams consistently address all “3 Whys” across the entire buyer journey with customer-focused messaging aligned to challenges and priorities The messaging is backed by data.", "Leading": "The \"3 Whys\" are always addressed with integrated training and materials ensuring consistent communication The “3 Whys” are seamlessly integrated into customer conversations, supported by."}}, {"name": "Value proposition engages emotions and is supported by proof points", "descriptions": {"None": "No formal process or capability exists for value proposition engages emotions and is supported by proof points, leading to inconsistent or limited outcomes.", "Emerging": "Emotional appeal is missing from the value proposition Teams focus solely on technical aspects and messaging does not focus on engaging buyer emotion Proof points.", "Basic": "The value proposition incorporates some emotional elements, supported by basic proof points such as case studies The emotional connection is largely consistent across customer interactions.", "Advanced": "Emotional engagement is a core part of the value proposition, consistently supported by proof points that demonstrate tangible results Teams use storytelling effectively to connect.", "Leading": "The value proposition seamlessly integrates emotional storytelling with robust proof points, creating a compelling narrative that resonates deeply with buyers Buyers see the company as."}}, {"name": "Organization wide adoption of value proposition", "descriptions": {"None": "No formal process or capability exists for organization wide adoption of value proposition, leading to inconsistent or limited outcomes.", "Emerging": "Limited to leadership with no documentation or formal sharing mechanism There is no shared understanding or alignment across departments, resulting in inconsistent messaging and delivery.", "Basic": "Some documentation exists; a few employees can articulate it and alignment is more evident The value proposition is adopted by most teams, but execution varies.", "Advanced": "Documented and integrated into some sales enablement tools, with high levels of team adoption The value proposition is embedded into the organization’s culture, with consistent.", "Leading": "Organization-wide adoption is seamless, with every team understanding and championing the value proposition Teams proactively use the value proposition to guide decision-making and enhance customer."}}, {"name": "Proven unit economics", "descriptions": {"None": "No formal process or capability exists for proven unit economics, leading to inconsistent or limited outcomes.", "Emerging": "The company has a basic understanding of unit economics, such as costs and desired engagement margins, but the engagements are not yet packaged optimally.", "Basic": "Unit economics are tracked consistently, but the focus is limited to a few metrics Teams use them primarily for internal decision-making rather than as a.", "Advanced": "Unit economics are a core component of both internal strategy and customer discussions Sales teams leverage these metrics to validate \"Outcomes\" and align solutions with.", "Leading": "The company is recognized as a market leader in leveraging unit economics Metrics are predictive, customer-facing, and continuously optimized to reflect industry changes."}}, {"name": "Elevator pitch", "descriptions": {"None": "No formal process or capability exists for elevator pitch, leading to inconsistent or limited outcomes.", "Emerging": "Elevator pitches are inconsistent across teams and focus heavily on features rather than benefits Messaging lacks alignment with customer pain points or goals.", "Basic": "Teams have a standardized pitch and can adapt it to different customer needs The focus is shifting from features to outcomes, but the delivery is.", "Advanced": "Elevator pitches are well-crafted, concise, and consistently adapted to customer needs Teams use storytelling techniques from the \"Hero’s Journey\" to engage customers emotionally and highlight.", "Leading": "Elevator pitches are dynamic, data-driven, and emotionally resonant Teams integrate real-time insights and customer-specific data to create personalized pitches that resonate deeply."}}]}]</script>
+<script>
+window.assessmentData = JSON.parse(document.getElementById("assessment-data").textContent);
+</script>
+<!-- Override assessment data with simplified version generated from the latest Excel -->
+<script src="assessment_data_simplified.js"></script>
+<script>
+    // Data imported from summary file. This object defines categories, questions and maturity descriptions.
+    
+
+    // Provide high-level descriptions for each category to guide the user. These are shown at the top of each section.
+    const categoryDescriptions = {
+      'Value Proposition': 'Assess how clearly and convincingly your organisation articulates and delivers economic and emotional value, supported by proof points and adoption across teams.',
+      'Offering': 'Evaluate your ability to address the full solution lifecycle, deliver with scalable methodologies, and align pricing and roadmaps to customer needs.',
+      'Marketing': 'Examine your marketing capabilities from customer profiling and lead generation to website optimisation, sales materials and metrics.',
+      'Sales': 'Analyse how defined, structured and data‑driven your sales process, culture, roles and metrics are to drive revenue.',
+      'Delivery': 'Measure your ability to reliably deliver projects, manage accounts, develop skills and retain customers through strong delivery frameworks.',
+      'Enblement Technology': 'Review the technology stack that powers marketing, CRM, learning, project management and lead generation across your organisation.',
+      'Enablement Technology': 'Review the technology stack that powers marketing, CRM, learning, project management and lead generation across your organisation.',
+      'Change Management': 'Assess readiness, leadership support, capability and culture for change management across your organisation.'
+    };
+
+    // Tooltip management: show full descriptions on hover
+    const tooltipEl = document.createElement('div');
+    tooltipEl.id = 'tooltip';
+    tooltipEl.style.position = 'fixed';
+    tooltipEl.style.zIndex = '9999';
+    tooltipEl.style.background = 'rgba(31,41,51,0.9)';
+    tooltipEl.style.color = '#FFFFFF';
+    tooltipEl.style.padding = '0.5rem 0.75rem';
+    tooltipEl.style.borderRadius = '4px';
+    tooltipEl.style.maxWidth = '300px';
+    tooltipEl.style.fontSize = '0.8rem';
+    tooltipEl.style.display = 'none';
+    tooltipEl.style.pointerEvents = 'none';
+    document.body.appendChild(tooltipEl);
+
+    // Generic improvement suggestions per category for the next maturity stage. Each category has up to three high‑level suggestions.
+    const improvementSuggestions = {
+      'Value Proposition': [
+        'Develop a robust economic value proposition using data‑driven ROI models and customer case studies.',
+        'Craft emotionally resonant stories backed by proof points to connect with buyers on a personal level.',
+        'Ensure organisation‑wide adoption of your value proposition through consistent messaging, training and decision‑making.'
+      ],
+      'Offering': [
+        'Deliver seamless support across the full customer lifecycle using standardised methodologies.',
+        'Enhance scalability by implementing repeatable processes and tools for expansion into new markets.',
+        'Refine your pricing strategy and solution roadmap to reflect customer insights and market trends.'
+      ],
+      'Marketing': [
+        'Define detailed ideal customer profiles and personas to target the right audience.',
+        'Implement a structured lead generation process with lead scoring and nurturing workflows.',
+        'Optimise your website and content for lead generation and SEO.'
+      ],
+      'Sales': [
+        'Document and optimise your sales process, aligning it with your buyer journey.',
+        'Build a cohesive sales culture with clear roles, responsibilities and data‑driven metrics.',
+        'Enhance distribution models and incentive structures to drive performance.'
+      ],
+      'Delivery': [
+        'Establish proven delivery capabilities supported by documented workflows and project management tools.',
+        'Define required skills and knowledge, and implement continuous training and certification.',
+        'Develop account management processes and retention strategies to upsell and retain clients.'
+      ],
+      'Enblement Technology': [
+        'Implement or expand marketing automation and CRM systems to centralise customer data.',
+        'Adopt learning, project management and lead generation tools for operational efficiency.',
+        'Integrate technology platforms to enable seamless data flow and analytics.'
+      ],
+      'Enablement Technology': [
+        'Implement or expand marketing automation and CRM systems to centralise customer data.',
+        'Adopt learning, project management and lead generation tools for operational efficiency.',
+        'Integrate technology platforms to enable seamless data flow and analytics.'
+      ],
+      'Change Management': [
+        'Improve organisational readiness for change through assessment and planning.',
+        'Align leadership and secure commitment to transformation initiatives.',
+        'Build change capability and culture through training, communication and feedback loops.'
+      ]
+    };
+
+    // Resource recommendations per category. These links point to SalesSparx materials to support growth.
+    const categoryResources = {
+      'Value Proposition': [
+        { label: 'Sample Value Calculator', url: 'https://salessparx.com/resources/sample-value-calculator/' },
+        { label: 'Complete Visual References', url: 'https://salessparx.com/resources/complete-visual-references/' },
+        { label: 'Shared Vision Selling Guide', url: 'https://salessparx.com/resources/shared-vision-selling-guide/' }
+      ],
+      'Offering': [
+        { label: 'Account & Opportunity Template', url: 'https://salessparx.com/resources/account-and-opportunity-template/' },
+        { label: 'Complete Visual References', url: 'https://salessparx.com/resources/complete-visual-references/' },
+        { label: 'Shared Vision Selling Guide', url: 'https://salessparx.com/resources/shared-vision-selling-guide/' }
+      ],
+      'Marketing': [
+        { label: 'Market Sample Report', url: 'https://salessparx.com/resources/market-sample-report/' },
+        { label: 'Complete Visual References', url: 'https://salessparx.com/resources/complete-visual-references/' },
+        { label: 'Fuse Market Maturity Assessment Criteria', url: 'https://salessparx.com/resources/fuse-market-maturity-assessment-criteria/' }
+      ],
+      'Sales': [
+        { label: 'Shared Vision Selling Guide', url: 'https://salessparx.com/resources/shared-vision-selling-guide/' },
+        { label: 'Account & Opportunity Template', url: 'https://salessparx.com/resources/account-and-opportunity-template/' },
+        { label: 'Light Your Sales Fuse', url: 'https://salessparx.com/light-your-sales-fuse/' }
+      ],
+      'Delivery': [
+        { label: 'Account & Opportunity Template', url: 'https://salessparx.com/resources/account-and-opportunity-template/' },
+        { label: 'Shared Vision Selling Guide', url: 'https://salessparx.com/resources/shared-vision-selling-guide/' },
+        { label: 'Light Your Sales Fuse', url: 'https://salessparx.com/light-your-sales-fuse/' }
+      ],
+      'Enblement Technology': [
+        { label: 'Complete Visual References', url: 'https://salessparx.com/resources/complete-visual-references/' },
+        { label: 'Fuse Market Maturity Assessment Criteria', url: 'https://salessparx.com/resources/fuse-market-maturity-assessment-criteria/' },
+        { label: 'Sample Value Calculator', url: 'https://salessparx.com/resources/sample-value-calculator/' }
+      ],
+      'Enablement Technology': [
+        { label: 'Complete Visual References', url: 'https://salessparx.com/resources/complete-visual-references/' },
+        { label: 'Fuse Market Maturity Assessment Criteria', url: 'https://salessparx.com/resources/fuse-market-maturity-assessment-criteria/' },
+        { label: 'Sample Value Calculator', url: 'https://salessparx.com/resources/sample-value-calculator/' }
+      ],
+      'Change Management': [
+        { label: 'Light Your Sales Fuse', url: 'https://salessparx.com/light-your-sales-fuse/' },
+        { label: 'Shared Vision Selling Guide', url: 'https://salessparx.com/resources/shared-vision-selling-guide/' },
+        { label: 'Fuse Market Maturity Assessment Criteria', url: 'https://salessparx.com/resources/fuse-market-maturity-assessment-criteria/' }
+      ]
+    };
+
+    function showTooltip(text) {
+      tooltipEl.textContent = text;
+      tooltipEl.style.display = 'block';
+    }
+    function positionTooltip(x, y) {
+      const padding = 12;
+      let left = x + padding;
+      let top = y + padding;
+      // prevent tooltip from going off screen
+      const rect = tooltipEl.getBoundingClientRect();
+      if (left + rect.width > window.innerWidth) left = x - rect.width - padding;
+      if (top + rect.height > window.innerHeight) top = y - rect.height - padding;
+      tooltipEl.style.left = `${left}px`;
+      tooltipEl.style.top = `${top}px`;
+    }
+    function hideTooltip() {
+      tooltipEl.style.display = 'none';
+    }
+
+    // Map numerical scores to maturity levels (1 through 5)
+    function scoreToLevel(score) {
+      // Determine maturity level based on continuous average:
+      // 1: None; >1 and <3: Emerging; >=3 and <4: Basic; >=4 and <5: Advanced; 5: Leading
+      if (score <= 1) return 'None';
+      if (score < 3) return 'Emerging';
+      if (score < 4) return 'Basic';
+      if (score < 5) return 'Advanced';
+      return 'Leading';
+    }
+
+    // Capture user details and responses
+    const userDetails = {};
+    let currentCategoryIndex = 0;
+    // Reorder categories to follow the desired sequence
+    (function reorder() {
+      // Reorder categories to follow the desired sequence. Some category names may vary slightly (e.g. Enblement vs Enablement).
+      const desired = ['Value Proposition','Offering','Marketing','Sales','Delivery','Enablement Technology','Enblement Technology','Change Management'];
+      if (Array.isArray(window.assessmentData)) {
+        const reordered = [];
+        desired.forEach(name => {
+          const found = window.assessmentData.find(c => c.name === name);
+          if (found && !reordered.includes(found)) reordered.push(found);
+        });
+        // Append any remaining categories that were not explicitly listed
+        window.assessmentData.forEach(cat => {
+          if (!reordered.includes(cat)) reordered.push(cat);
+        });
+        window.assessmentData = reordered;
+        // After reordering categories, clean descriptions to remove duplicate words and truncated fragments
+        cleanDescriptions();
+      }
+    })();
+
+    /**
+     * Clean descriptions by removing duplicate consecutive words, trimming incomplete phrases,
+     * and ensuring each sentence ends with a period. This function iterates over all
+     * subcategory descriptions and normalises them for better readability.
+     */
+    function cleanDescriptions() {
+      if (!Array.isArray(window.assessmentData)) return;
+      window.assessmentData.forEach(cat => {
+        if (!Array.isArray(cat.subcategories)) return;
+        cat.subcategories.forEach(sub => {
+          if (!sub.descriptions) return;
+          Object.keys(sub.descriptions).forEach(level => {
+            let text = sub.descriptions[level] || '';
+            if (typeof text !== 'string') return;
+            // Remove duplicate consecutive words (e.g., "the the")
+            text = text.replace(/\b(\w+)( \1\b)+/gi, '$1');
+            // Remove common truncated fragment "rather than as a" if present
+            text = text.replace(/rather than as a\.?/gi, '');
+            text = text.trim();
+            // Ensure the description ends with a period for consistency
+            if (text && !/[.!?]$/.test(text)) {
+              text += '.';
+            }
+            sub.descriptions[level] = text;
+          });
+        });
+      });
+    }
+    const responses = {};
+
+    // Start assessment after validating fields
+    document.getElementById('start-btn').addEventListener('click', () => {
+      const name = document.getElementById('name').value.trim();
+      const company = document.getElementById('company').value.trim();
+      const role = document.getElementById('role').value.trim();
+      const email = document.getElementById('email').value.trim();
+      if (!name || !company || !role || !email) {
+        alert('Please fill in all fields.');
+        return;
+      }
+      userDetails.name = name;
+      userDetails.company = company;
+      userDetails.role = role;
+      userDetails.email = email;
+      // Ensure categories are ordered before starting the assessment
+      (function reorderOnStart() {
+        const desired = ['Value Proposition','Offering','Marketing','Sales','Delivery','Enablement Technology','Enblement Technology','Change Management'];
+        if (Array.isArray(window.assessmentData)) {
+          const reordered = [];
+          desired.forEach(name => {
+            const found = window.assessmentData.find(c => c.name === name);
+            if (found && !reordered.includes(found)) reordered.push(found);
+          });
+          window.assessmentData.forEach(cat => {
+            if (!reordered.includes(cat)) reordered.push(cat);
+          });
+          window.assessmentData = reordered;
+          // Clean descriptions again to ensure consistent formatting
+          cleanDescriptions();
+        }
+      })();
+      // Hide intro and show first category
+      showPage('assessment-page');
+      currentCategoryIndex = 0;
+      renderCategory();
+    });
+
+    // Navigation buttons
+    document.getElementById('prev-btn').addEventListener('click', () => {
+      if (currentCategoryIndex > 0) {
+        currentCategoryIndex--;
+        renderCategory();
+      }
+    });
+    document.getElementById('next-btn').addEventListener('click', () => {
+      if (!saveCategoryResponses()) return; // ensure all questions answered
+      if (currentCategoryIndex < window.assessmentData.length - 1) {
+        currentCategoryIndex++;
+        renderCategory();
+      } else {
+        showResults();
+      }
+    });
+
+    document.getElementById('print-btn').addEventListener('click', () => {
+      window.print();
+    });
+
+    // Save as PDF button uses window.print() to allow browser PDF download
+    document.getElementById('pdf-btn').addEventListener('click', () => {
+      window.print();
+    });
+
+    // Restart button returns to intro page and pre-fills the user's details
+    document.getElementById('restart-btn').addEventListener('click', () => {
+      // If details have been captured, repopulate the intro form
+      if (userDetails) {
+        document.getElementById('name').value = userDetails.name || '';
+        document.getElementById('company').value = userDetails.company || '';
+        document.getElementById('role').value = userDetails.role || '';
+        document.getElementById('email').value = userDetails.email || '';
+      }
+      // Show the intro page
+      showPage('intro-page');
+    });
+
+    // Back button returns to the last answered category (final section) so the user can review
+    document.getElementById('back-btn').addEventListener('click', () => {
+      // Set the current index to the final category
+      currentCategoryIndex = window.assessmentData.length - 1;
+      showPage('assessment-page');
+      renderCategory();
+    });
+
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    // Render current category page
+    function renderCategory() {
+      const category = window.assessmentData[currentCategoryIndex];
+      document.getElementById('category-title').textContent = category.name;
+      // Set the category instructions based on our description mapping and add a hint to hover for details
+      const desc = categoryDescriptions[category.name] || '';
+      const instrEl = document.getElementById('category-instructions');
+      // Create two paragraphs: one for the category description and one for the hover instruction. The hover instruction uses the hover-instruction class.
+      instrEl.innerHTML = `<p>${desc}</p><p class="hover-instruction">Hover over each maturity level to read the full description.</p>`;
+      // Build and update the stepper progress bar
+      const stepperEl = document.getElementById('category-stepper');
+      const percentEl = document.getElementById('progress-percentage');
+      if (stepperEl && percentEl) {
+        stepperEl.innerHTML = '';
+        // Create a step element for each category in the assessment data
+        window.assessmentData.forEach((cat, idx) => {
+          const stepDiv = document.createElement('div');
+          stepDiv.className = 'step';
+          if (idx < currentCategoryIndex) {
+            stepDiv.classList.add('completed');
+          } else if (idx === currentCategoryIndex) {
+            stepDiv.classList.add('current');
+          } else {
+            stepDiv.classList.add('upcoming');
+          }
+          // Step number
+          const numEl = document.createElement('div');
+          numEl.className = 'step-number';
+          numEl.textContent = String(idx + 1);
+          // Step label
+          const labelEl = document.createElement('div');
+          labelEl.className = 'step-label';
+          labelEl.textContent = cat.name;
+          stepDiv.appendChild(numEl);
+          stepDiv.appendChild(labelEl);
+          stepperEl.appendChild(stepDiv);
+        });
+        // Compute and display completion percentage
+        const percent = Math.round((currentCategoryIndex) / window.assessmentData.length * 100);
+        percentEl.textContent = percent + '%';
+      }
+      const container = document.getElementById('questions-container');
+      container.innerHTML = '';
+      category.subcategories.forEach((subcat) => {
+        const qDiv = document.createElement('div');
+        qDiv.className = 'question-block';
+        const title = document.createElement('div');
+        title.className = 'question-title';
+        title.textContent = subcat.name;
+        qDiv.appendChild(title);
+        const optionsRow = document.createElement('div');
+        optionsRow.className = 'option-row';
+        // Define the maturity level order and numeric values used for scoring (1–5)
+        const levelOrder = ['None','Emerging','Basic','Advanced','Leading'];
+        const valueMap = {None:1, Emerging:2, Basic:3, Advanced:4, Leading:5};
+        levelOrder.forEach(levelName => {
+          const value = valueMap[levelName];
+          const optDiv = document.createElement('div');
+          optDiv.className = 'option';
+          optDiv.dataset.value = value;
+          // Display numeric prefix along with label (e.g. 1 None, 2 Emerging)
+          // Display bold number followed by the classification in parentheses (not bold)
+          optDiv.innerHTML = `<strong>${value}</strong> (${levelName})`;
+          // Attach full description for tooltip
+          const fullDesc = subcat.descriptions[levelName] || '';
+          optDiv.dataset.description = fullDesc;
+          // Restore previously selected value if exists
+          const key = `${category.name}|${subcat.name}`;
+          if (responses[key] === value) {
+            optDiv.classList.add('active');
+          }
+          // Event listeners for selection and tooltip
+          optDiv.addEventListener('click', () => {
+            Array.from(optionsRow.children).forEach(child => child.classList.remove('active'));
+            optDiv.classList.add('active');
+            responses[key] = value;
+          });
+          optDiv.addEventListener('mouseenter', (e) => {
+            showTooltip(fullDesc);
+            positionTooltip(e.clientX, e.clientY);
+          });
+          optDiv.addEventListener('mousemove', (e) => {
+            positionTooltip(e.clientX, e.clientY);
+          });
+          optDiv.addEventListener('mouseleave', () => {
+            hideTooltip();
+          });
+          optionsRow.appendChild(optDiv);
+        });
+        qDiv.appendChild(optionsRow);
+        container.appendChild(qDiv);
+      });
+      // Adjust prev button visibility
+      document.getElementById('prev-btn').style.visibility = currentCategoryIndex === 0 ? 'hidden' : 'visible';
+    }
+
+    function saveCategoryResponses() {
+      // Check that all questions in current category have responses
+      const category = window.assessmentData[currentCategoryIndex];
+      for (const subcat of category.subcategories) {
+        const key = `${category.name}|${subcat.name}`;
+        if (responses[key] === undefined) {
+          alert('Please answer all questions in this section.');
+          return false;
+        }
+      }
+      return true;
+    }
+
+    function showResults() {
+      showPage('results-page');
+      // Display participant info
+      const infoDiv = document.getElementById('participant-info');
+      infoDiv.textContent = `${userDetails.name} (${userDetails.role}, ${userDetails.company}) | ${userDetails.email}`;
+      // Compute average score per category
+      const categoryScores = [];
+      window.assessmentData.forEach(cat => {
+        let total = 0;
+        let count = 0;
+        cat.subcategories.forEach(sub => {
+          const key = `${cat.name}|${sub.name}`;
+          total += responses[key];
+          count++;
+        });
+        const avg = total / count;
+        categoryScores.push({name: cat.name, avg: avg});
+      });
+      // Build summary narrative with a more descriptive recommendation
+      const strengths = categoryScores.filter(c => c.avg >= 4).map(c => c.name);
+      const developing = categoryScores.filter(c => c.avg >= 3 && c.avg < 4).map(c => c.name);
+      const improvementAreas = categoryScores.filter(c => c.avg < 3).map(c => c.name);
+      let summaryNarrative = '';
+      if (strengths.length) {
+        summaryNarrative += `Your organisation shows strong maturity in ${strengths.join(', ')}. `;
+      }
+      if (developing.length) {
+        summaryNarrative += `${developing.join(', ')} are developing. `;
+      }
+      if (improvementAreas.length) {
+        summaryNarrative += `To accelerate growth, invest in ${improvementAreas.join(', ')}.`;
+      }
+      if (!summaryNarrative) {
+        summaryNarrative = 'Your go‑to‑market maturity appears balanced across all categories.';
+      }
+      // Ensure the narrative ends with a general insight to reach about 50 words
+      summaryNarrative += ' This assessment highlights your strengths and opportunities to scale your go‑to‑market success.';
+      // Hide the old short summary text – overall narrative replaces it
+      const summaryEl = document.getElementById('summary-text');
+      summaryEl.textContent = '';
+      summaryEl.style.display = 'none';
+      // Draw radar chart
+      drawRadarChart(categoryScores);
+
+      // Compute overall average across all categories and craft an overview narrative
+      const totalAvg = categoryScores.reduce((sum, c) => sum + c.avg, 0) / categoryScores.length;
+      const overallLevel = scoreToLevel(totalAvg);
+      // Determine high, developing and improvement categories again for overall summary
+      const highCats = categoryScores.filter(c => c.avg >= 4).map(c => c.name);
+      const midCats = categoryScores.filter(c => c.avg >= 3 && c.avg < 4).map(c => c.name);
+      const lowCats = categoryScores.filter(c => c.avg < 3).map(c => c.name);
+      // Build overall narrative using multiple paragraphs and without referencing the FUSE framework directly.
+      const nextStageMapOverall = { None: 'Emerging', Emerging: 'Basic', Basic: 'Advanced', Advanced: 'Leading', Leading: 'Leading' };
+      const overallNext = nextStageMapOverall[overallLevel] || 'Emerging';
+      let narrativeHtml = '';
+      // Paragraph 1: headline score and stage
+      narrativeHtml += '<p>Your overall go‑to‑market maturity score is <strong>' + totalAvg.toFixed(1) + '</strong> out of 5, placing you in the <strong>' + overallLevel + '</strong> stage. ';
+      if (overallLevel === 'None') {
+        narrativeHtml += 'At this stage, your organisation lacks formal processes across most areas.';
+      } else if (overallLevel === 'Emerging') {
+        narrativeHtml += 'You have begun building structure, but many capabilities remain nascent.';
+      } else if (overallLevel === 'Basic') {
+        narrativeHtml += 'Foundational practices are in place, yet there is significant room to optimise and scale.';
+      } else if (overallLevel === 'Advanced') {
+        narrativeHtml += 'Your approach is data‑driven and optimised, though a few dimensions could still be strengthened.';
+      } else if (overallLevel === 'Leading') {
+        narrativeHtml += 'You exhibit world‑class maturity and continuous improvement across your go‑to‑market functions.';
+      }
+      narrativeHtml += '</p>';
+      // Paragraph 2: strengths, mid-range and low-range categories
+      narrativeHtml += '<p>';
+      if (highCats.length) {
+        narrativeHtml += 'You excel in <strong>' + highCats.join(', ') + '</strong>. ';
+      }
+      if (midCats.length) {
+        narrativeHtml += midCats.join(', ') + ' show solid foundations but would benefit from further development. ';
+      }
+      if (lowCats.length) {
+        narrativeHtml += 'Key opportunities lie within <strong>' + lowCats.join(', ') + '</strong>, where establishing stronger processes and data‑driven practices will have the greatest impact. ';
+      }
+      narrativeHtml += '</p>';
+      // Paragraph 3: guidance for next steps
+      narrativeHtml += '<p>To progress from <strong>' + overallLevel + '</strong> to <strong>' + overallNext + '</strong>, concentrate on strengthening your core capabilities, aligning teams around shared processes and data, and investing in repeatable, scalable selling motions. Use the table and curated resources below to prioritise initiatives that will help you ascend to the next maturity stage. For deeper guidance, download our book <a href="https://salessparx.com/light-your-sales-fuse/" target="_blank">Light Your Sales Fuse</a> or contact us for personalised advice.</p>';
+      // Update the overall summary card with a heading and the narrative
+      const overallDiv = document.getElementById('overall-summary');
+      overallDiv.innerHTML = `<h2>Overall Maturity Summary</h2>` + narrativeHtml;
+      // Save assessment to localStorage for admin dashboard
+      try {
+        const saved = JSON.parse(localStorage.getItem('assessments')) || [];
+        // Clone objects to avoid referencing reactive objects
+        const record = { user: { ...userDetails }, scores: categoryScores.map(sc => ({ name: sc.name, avg: sc.avg })) };
+        saved.push(record);
+        localStorage.setItem('assessments', JSON.stringify(saved));
+      } catch (e) {
+        console.warn('Unable to save assessment:', e);
+      }
+      // Build a modern table summarising scores, classifications, improvements and resources
+      const improvementsDiv = document.getElementById('improvements');
+      improvementsDiv.innerHTML = '';
+      const table = document.createElement('table');
+      table.className = 'improvements-table';
+      const headerRow = document.createElement('tr');
+      headerRow.innerHTML = '<th>Category</th><th>Average Score</th><th>Level</th><th>Improvement Suggestions</th><th>Recommended Resources</th>';
+      table.appendChild(headerRow);
+      window.assessmentData.forEach(cat => {
+        // Compute average and classification for this category
+        let total = 0;
+        let count = 0;
+        cat.subcategories.forEach(sub => {
+          const key = `${cat.name}|${sub.name}`;
+          total += responses[key];
+          count++;
+        });
+        const avg = total / count;
+        // Compute classification based on the raw average, not rounded
+        const classification = scoreToLevel(avg);
+        // Build suggestions list (up to 3) from our pre-defined mapping
+        const suggList = improvementSuggestions[cat.name] || improvementSuggestions['Enablement Technology'];
+        const resourceList = categoryResources[cat.name] || categoryResources['Enablement Technology'];
+        const tr = document.createElement('tr');
+        // Category name
+        const catTd = document.createElement('td');
+        catTd.textContent = cat.name;
+        tr.appendChild(catTd);
+        // Average score
+        const scoreTd = document.createElement('td');
+        scoreTd.textContent = avg.toFixed(1);
+        tr.appendChild(scoreTd);
+        // Level
+        const levelTd = document.createElement('td');
+        levelTd.textContent = classification;
+        tr.appendChild(levelTd);
+        // Suggestions
+        const suggTd = document.createElement('td');
+        // Determine the next maturity stage based on the current classification
+        const nextStageMap = { None: 'Emerging', Emerging: 'Basic', Basic: 'Advanced', Advanced: 'Leading', Leading: 'Leading' };
+        const nextStage = nextStageMap[classification] || 'Emerging';
+        // Intro paragraph explaining how to move to the next stage
+        const intro = document.createElement('p');
+        intro.innerHTML = `To progress from <strong>${classification}</strong> to <strong>${nextStage}</strong>, focus on:`;
+        suggTd.appendChild(intro);
+        const suggUl = document.createElement('ul');
+        suggList.forEach(s => {
+          const li = document.createElement('li');
+          li.textContent = s;
+          suggUl.appendChild(li);
+        });
+        suggTd.appendChild(suggUl);
+        tr.appendChild(suggTd);
+        // Resources
+        const resTd = document.createElement('td');
+        const resUl = document.createElement('ul');
+        resourceList.forEach(r => {
+          const li = document.createElement('li');
+          const a = document.createElement('a');
+          a.href = r.url;
+          a.target = '_blank';
+          a.textContent = r.label;
+          li.appendChild(a);
+          resUl.appendChild(li);
+        });
+        resTd.appendChild(resUl);
+        tr.appendChild(resTd);
+        table.appendChild(tr);
+      });
+      improvementsDiv.appendChild(table);
+      // Clear the FUSE container. At this time we do not show the FUSE graphic or explanation.
+      const fuseContainer = document.getElementById('fuse-container');
+      if (fuseContainer) {
+        fuseContainer.innerHTML = '';
+      }
+    }
+
+    // Radar chart drawing using Canvas API
+    function drawRadarChart(categoryScores) {
+      const canvas = document.getElementById('radarCanvas');
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      ctx.clearRect(0, 0, width, height);
+      const cx = width / 2;
+      const cy = height / 2;
+      const radius = Math.min(width, height) * 0.35;
+      const levels = 5; // 0 to 5 values
+      const numAxes = categoryScores.length;
+      const angleStep = (Math.PI * 2) / numAxes;
+      // Draw concentric polygons (levels)
+      ctx.strokeStyle = '#D1D5DB';
+      ctx.lineWidth = 1;
+      for (let l = 1; l <= levels; l++) {
+        const r = (radius / levels) * l;
+        ctx.beginPath();
+        for (let i = 0; i < numAxes; i++) {
+          const angle = i * angleStep - Math.PI / 2;
+          const x = cx + r * Math.cos(angle);
+          const y = cy + r * Math.sin(angle);
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+      }
+      // Draw axes and labels
+      ctx.font = '12px sans-serif';
+      ctx.fillStyle = '#374151';
+      ctx.strokeStyle = '#B0BEC5';
+      categoryScores.forEach((cat, i) => {
+        const angle = i * angleStep - Math.PI / 2;
+        const x = cx + radius * Math.cos(angle);
+        const y = cy + radius * Math.sin(angle);
+        // axis line
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        // label
+        const labelX = cx + (radius + 30) * Math.cos(angle);
+        const labelY = cy + (radius + 30) * Math.sin(angle);
+        // Split long labels into two lines: break the category name roughly in half and append the score
+        const words = cat.name.split(' ');
+        let line1 = '';
+        let line2 = '';
+        if (words.length > 1) {
+          const mid = Math.ceil(words.length / 2);
+          line1 = words.slice(0, mid).join(' ');
+          line2 = words.slice(mid).join(' ') + ` (${cat.avg.toFixed(1)})`;
+        } else {
+          line1 = cat.name;
+          line2 = `(${cat.avg.toFixed(1)})`;
+        }
+        ctx.textAlign = labelX > cx ? 'left' : (labelX < cx ? 'right' : 'center');
+        ctx.textBaseline = 'middle';
+        ctx.fillText(line1, labelX, labelY - 8);
+        ctx.fillText(line2, labelX, labelY + 8);
+      });
+      // Draw data polygon connecting category scores
+      const points = [];
+      categoryScores.forEach((cat, i) => {
+        const angle = i * angleStep - Math.PI / 2;
+        // Normalize the average score (0-5) to radius
+        const rVal = (cat.avg / 5) * radius;
+        const x = cx + rVal * Math.cos(angle);
+        const y = cy + rVal * Math.sin(angle);
+        points.push({ x, y });
+      });
+      // Connect points
+      ctx.beginPath();
+      points.forEach((pt, idx) => {
+        if (idx === 0) ctx.moveTo(pt.x, pt.y); else ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.closePath();
+      ctx.strokeStyle = '#EB5C22';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      // Fill polygon with semi-transparent colour
+      ctx.fillStyle = 'rgba(235,92,34,0.2)';
+      ctx.fill();
+      // Draw markers at vertices
+      ctx.fillStyle = '#EB5C22';
+      points.forEach(pt => {
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    // ===== Admin functions =====
+    // Navigate to admin login when link is clicked
+    document.getElementById('admin-login-link').addEventListener('click', (e) => {
+      e.preventDefault();
+      showPage('admin-login-page');
+    });
+    // Handle admin login validation
+    document.getElementById('admin-login-btn').addEventListener('click', () => {
+      const u = document.getElementById('admin-user').value.trim();
+      const p = document.getElementById('admin-pass').value.trim();
+      if (u === 'salessparx' && p === 'salessparx2025') {
+        document.getElementById('admin-error').textContent = '';
+        renderAdminDashboard();
+        showPage('admin-dashboard-page');
+      } else {
+        document.getElementById('admin-error').textContent = 'Invalid credentials';
+      }
+    });
+    // Logout returns to intro page
+    document.getElementById('admin-logout-btn').addEventListener('click', () => {
+      showPage('intro-page');
+    });
+    // Build admin dashboard table
+    function renderAdminDashboard() {
+      const saved = JSON.parse(localStorage.getItem('assessments')) || [];
+      const headerRow = document.getElementById('admin-header-row');
+      const tbody = document.getElementById('admin-table-body');
+      headerRow.innerHTML = '';
+      tbody.innerHTML = '';
+      // Header
+      let headerHtml = '<th>Name</th><th>Role</th><th>Company</th><th>Email</th>';
+      window.assessmentData.forEach(cat => {
+        headerHtml += `<th>${cat.name}</th>`;
+      });
+      headerRow.innerHTML = headerHtml;
+      // Rows
+      saved.forEach(rec => {
+        const tr = document.createElement('tr');
+        let rowHtml = `<td>${rec.user.name || ''}</td><td>${rec.user.role || ''}</td><td>${rec.user.company || ''}</td><td>${rec.user.email || ''}</td>`;
+        window.assessmentData.forEach(cat => {
+          const sc = rec.scores.find(s => s.name === cat.name);
+          rowHtml += `<td>${sc ? sc.avg.toFixed(1) : ''}</td>`;
+        });
+        tr.innerHTML = rowHtml;
+        tbody.appendChild(tr);
+      });
+    }
+
+  </script>
+</body>
+</html>
