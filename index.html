@@ -502,7 +502,7 @@
       'Marketing': 'Examine your marketing capabilities from customer profiling and lead generation to website optimisation, sales materials and metrics.',
       'Sales': 'Analyse how defined, structured and data‑driven your sales process, culture, roles and metrics are to drive revenue.',
       'Delivery': 'Measure your ability to reliably deliver projects, manage accounts, develop skills and retain customers through strong delivery frameworks.',
-      'Enblement Technology': 'Review the technology stack that powers marketing, CRM, learning, project management and lead generation across your organisation.',
+      'Enablement Technology': 'Review the technology stack that powers marketing, CRM, learning, project management and lead generation across your organisation.',
       'Enablement Technology': 'Review the technology stack that powers marketing, CRM, learning, project management and lead generation across your organisation.',
       'Change Management': 'Assess readiness, leadership support, capability and culture for change management across your organisation.'
     };
@@ -549,7 +549,7 @@
         'Define required skills and knowledge, and implement continuous training and certification.',
         'Develop account management processes and retention strategies to upsell and retain clients.'
       ],
-      'Enblement Technology': [
+      'Enablement Technology': [
         'Implement or expand marketing automation and CRM systems to centralise customer data.',
         'Adopt learning, project management and lead generation tools for operational efficiency.',
         'Integrate technology platforms to enable seamless data flow and analytics.'
@@ -593,7 +593,7 @@
         { label: 'Shared Vision Selling Guide', url: 'https://salessparx.com/resources/shared-vision-selling-guide/' },
         { label: 'Light Your Sales Fuse', url: 'https://salessparx.com/light-your-sales-fuse/' }
       ],
-      'Enblement Technology': [
+      'Enablement Technology': [
         { label: 'Complete Visual References', url: 'https://salessparx.com/resources/complete-visual-references/' },
         { label: 'Fuse Market Maturity Assessment Criteria', url: 'https://salessparx.com/resources/fuse-market-maturity-assessment-criteria/' },
         { label: 'Sample Value Calculator', url: 'https://salessparx.com/resources/sample-value-calculator/' }
@@ -645,8 +645,8 @@
     let currentCategoryIndex = 0;
     // Reorder categories to follow the desired sequence
     (function reorder() {
-      // Reorder categories to follow the desired sequence. Some category names may vary slightly (e.g. Enblement vs Enablement).
-      const desired = ['Value Proposition','Offering','Marketing','Sales','Delivery','Enablement Technology','Enblement Technology','Change Management'];
+      // Reorder categories to follow the desired sequence. Some category names may vary slightly (e.g. Enablement vs Enablement).
+      const desired = ['Value Proposition','Offering','Marketing','Sales','Delivery','Enablement Technology','Change Management'];
       if (Array.isArray(window.assessmentData)) {
         const reordered = [];
         desired.forEach(name => {
@@ -709,7 +709,7 @@
       userDetails.email = email;
       // Ensure categories are ordered before starting the assessment
       (function reorderOnStart() {
-        const desired = ['Value Proposition','Offering','Marketing','Sales','Delivery','Enablement Technology','Enblement Technology','Change Management'];
+        const desired = ['Value Proposition','Offering','Marketing','Sales','Delivery','Enablement Technology','Change Management'];
         if (Array.isArray(window.assessmentData)) {
           const reordered = [];
           desired.forEach(name => {
