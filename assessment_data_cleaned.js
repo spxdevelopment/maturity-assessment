@@ -5,17 +5,17 @@ window.assessmentData = [
       {
         "name": "Organizational Readiness for Change",
         "descriptions": {
-          "None": "Organization isn\u2019t ready for change, lacking preparation and buy\u2011in.",
+          "None": "Organization is not ready for change,  lacking preparation.",
           "Emerging": "No formal process exists to manage GTM-related change is reactive, fragmented, and often seen as disruptive. Limited awareness of GTM strategy across teams.",
           "Basic": "Limited awareness of the need for GTM change exists. Planning happens in silos. Team shifts are initiated but lack consistent cross-functional engagement.",
-          "Advanced": "Structured. GTM change processes in place. Functional teams are aligned on timelines, deliverables, and dependencies. Playbooks and transition plans are standardized.",
+          "Advanced": "Structured GTM change processes in place. Functional teams are aligned on timelines, deliverables, and dependencies. Playbooks and transition plans are standardized.",
           "Leading": "Change initiatives are integrated into strategic GTM planning cycles. Teams operate with agility, iterate based on feedback, and proactively address resistance to change."
         }
       },
       {
         "name": "Leadership Alignment & Commitment",
         "descriptions": {
-          "None": "Leadership isn\u2019t aligned or committed to change initiatives, slowing progress.",
+          "None": "Leadership is not aligned or committed to change initiatives, slowing progress.",
           "Emerging": "Leadership is not visibly aligned or engaged in GTM transformation. Change lacks executive sponsorship or clear communication.",
           "Basic": "Some leaders express support for GTM changes but messaging is inconsistent. There is limited accountability or follow-up on execution.",
           "Advanced": "Leadership actively sponsors GTM change initiatives. They communicate vision clearly and reinforce change expectations in team interactions.",
@@ -60,7 +60,7 @@ window.assessmentData = [
       {
         "name": "Defined skills/knowledge requirements",
         "descriptions": {
-          "None": "Required skills and knowledge aren\u2019t documented, causing training gaps.",
+          "None": "Required skills and knowledge are not documented, causing training gaps.",
           "Emerging": "Teams lack a defined framework for the skills and knowledge required to deliver projects effectively. Training is minimal, and skill gaps often lead to delays.",
           "Basic": "Skill requirements are defined, with limited training programs in place for foundational competencies. Teams begin to specialize, but advanced skills such as project management.",
           "Advanced": "Skills and knowledge requirements are well-defined and updated regularly to reflect evolving client needs and industry trends. Teams participate in ongoing training programs and certifications.",
@@ -80,15 +80,15 @@ window.assessmentData = [
       {
         "name": "Retention/customer satisfaction",
         "descriptions": {
-          "None": "Retention strategies are missing, and customer satisfaction isn\u2019t measured effectively.",
+          "None": "Retention strategies are missing, and customer satisfaction is not measured effectively.",
           "Emerging": "The company lacks a structured approach to tracking or improving customer retention and satisfaction. Feedback mechanisms are informal.",
           "Basic": "Retention and satisfaction processes are defined, with teams tracking basic metrics such as churn rate, customer satisfaction scores, or renewal rates.",
           "Advanced": "Retention and satisfaction strategies are robust, supported by advanced tools and analytics to monitor customer health and predict churn risks.",
-          "Leading": "The company is an industry leader in customer retention and satisfaction, usin  AI-driven tools to deliver highly personalized, proactive experiences."
+          "Leading": "The company is an industry leader in customer retention and satisfaction, using  AI-driven tools to deliver highly personalized, proactive experiences."
         }
       },
       {
-        "name": "Defined account managment process",
+        "name": "Defined account management process",
         "descriptions": {
           "None": "Account management processes aren\u2019t defined, leading to neglected clients.",
           "Emerging": "Account management processes are informal or inconsistent, with limited documentation or alignment across teams. Account managers focus primarily on maintaining the status quo.",
@@ -108,7 +108,7 @@ window.assessmentData = [
           "None": "No marketing automation tools to nurture and convert leads.",
           "Emerging": "Marketing automation tools are either absent or underutilized, with teams relying on manual processes for lead generation, email campaigns, and customer segmentation.",
           "Basic": "Marketing automation tools are in place and support basic functions such as email marketing, lead scoring, and customer segmentation. However, workflows are static.",
-          "Advanced": "Marketing automation is fully integrated with. CRM and analytics platforms, enabling dynamic workflows and personalized content delivery. Teams use data-driven insights to continuously refine campaigns.",
+          "Advanced": "Marketing automation is fully integrated with CRM and analytics platforms, enabling dynamic workflows and personalized content delivery. Teams use data-driven insights to continuously refine campaigns.",
           "Leading": "The organization is a leader in marketing automation, using AI and advanced analytics to deliver real-time, personalized campaigns at scale. Automation tools are seamlessly integrated."
         }
       },
@@ -128,8 +128,8 @@ window.assessmentData = [
           "None": "Learning management system is missing, limiting employee development and compliance.",
           "Emerging": "Training and knowledge-sharing processes are informal, with no centralized platform for delivering or tracking learning content. Teams rely on ad hoc training sessions.",
           "Basic": "An LMS is in place with structured training paths for core competencies. Teams use the system for onboarding and role-specific training.",
-          "Advanced": "The. LMS is integrated with other systems, such as. CRM and project management tools, to provide a seamless learning experience.",
-          "Leading": "The. LMS is a strategic asset, leveraging AI and predictive analytics to anticipate future training needs and deliver real-time, personalized learning experiences."
+          "Advanced": "The LMS is integrated with other systems, such as CRM and project management tools, to provide a seamless learning experience.",
+          "Leading": "The LMS is a strategic asset, leveraging AI and predictive analytics to anticipate future training needs and deliver real-time, personalized learning experiences."
         }
       },
       {
@@ -138,17 +138,17 @@ window.assessmentData = [
           "None": "Project management system is absent, causing delays and miscommunication.",
           "Emerging": "Project management processes are manual, relying on spreadsheets or email to coordinate tasks. Teams face frequent delays and miscommunications due to a lack of centralized.",
           "Basic": "A project management system is in place, supporting core functions such as task assignments, timelines, and resource tracking. Teams use the system to coordinate efforts.",
-          "Advanced": "The project management system is integrated with other tools, such as. CRM and. LMS, to provide end-to-end visibility into project workflows.",
+          "Advanced": "The project management system is integrated with other tools, such as CRM and LMS, to provide end-to-end visibility into project workflows.",
           "Leading": "The project management system is a benchmark for the industry, using AI and real-time data to deliver exceptional outcomes."
         }
       },
       {
         "name": "Lead generation tools",
         "descriptions": {
-          "None": "Lead generation tools aren\u2019t utilised, reducing pipeline efficiency and productivity.",
+          "None": "Lead generation tools are not utilized, reducing pipeline efficiency and productivity.",
           "Emerging": "Lead generation tools are either absent or used inconsistently, with teams relying on manual methods such as cold calling or basic email campaigns.",
           "Basic": "Teams use lead generation tools to capture and qualify leads, such as email automation platforms or basic CRM features. Lead scoring models are in place.",
-          "Advanced": "Lead generation tools are fully integrated with marketing automation and. CRM systems, enabling seamless data sharing and advanced analytics. Teams use AI-driven insights to identify.",
+          "Advanced": "Lead generation tools are fully integrated with marketing automation and CRM systems, enabling seamless data sharing and advanced analytics. Teams use AI-driven insights to identify.",
           "Leading": "The organization is a leader in lead generation, using AI-driven tools to continuously optimize strategies and deliver exceptional results. Lead generation efforts are seamlessly integrated."
         }
       }
@@ -171,16 +171,16 @@ window.assessmentData = [
         "name": "Structured Lead Generation Process",
         "descriptions": {
           "None": "Lead generation is ad hoc, without a structured, repeatable process.",
-          "Emerging": "Lead generation efforts are ad hoc and rely heavily on outbound tactics such as cold calling and close relationsips. Teams lack formalized processes or tools.",
+          "Emerging": "Lead generation efforts are ad hoc and rely heavily on outbound tactics such as cold calling and close relationships. Teams lack formalized processes or tools.",
           "Basic": "Lead generation processes are defined, focusing on inbound tactics like email campaigns and website traffic. However, lead scoring is limited, lead gen tactics are not.",
-          "Advanced": "Lead generation processes are fully automated and integrated with. CRM systems. Teams consistently capture, qualify, and nurture leads, driving significant pipeline growth.",
+          "Advanced": "Lead generation processes are fully automated and integrated with CRM systems. Teams consistently capture, qualify, and nurture leads, driving significant pipeline growth.",
           "Leading": "The company is recognized as a leader in lead generation, using advanced tools and analytics to continuously optimize campaigns. Lead generation seamlessly supports sales efforts."
         }
       },
       {
         "name": "Website optimized for lead generation  (SEO, content)",
         "descriptions": {
-          "None": "Website isn\u2019t optimised for lead generation with. SEO and content.",
+          "None": "Website isn\u2019t optimized for lead generation with. SEO and content.",
           "Emerging": "The website serves as a basic informational hub with limited functionality for capturing leads. Content is sparse and lacks optimization for search engines.",
           "Basic": "The website includes foundational lead generation tools, such as landing pages and gated content, but struggles to drive significant traffic or engagement.",
           "Advanced": "The website is a central hub for lead generation, featuring dynamic content, advanced SEO strategies, and interactive tools. Teams use analytics to optimize performance.",
@@ -216,10 +216,10 @@ window.assessmentData = [
         "name": "Address full solution lifecycle",
         "descriptions": {
           "None": "Solutions only address parts of lifecycle; full journey is overlooked.",
-          "Emerging": "Support is limited to one phase of the customer lifecycle (eg, advisory or implementation), with minimal follow-through. Teams struggle to address \"The world has changed\".",
+          "Emerging": "Support is limited to one phase of the customer lifecycle (eg, advisory or implementation), with minimal follow-through.",
           "Basic": "The company provides support across multiple lifecycle stages but lacks a standardized methodology. Customer experience varies depending on the team or project.",
-          "Advanced": "Teams deliver seamless support across the lifecycle using proven methodologies \"Trusted\" conversations emphasize the organization\u2019s credibility and authority in delivering long-term value.",
-          "Leading": "The company is a recognized leader in lifecycle delivery, using innovative tools and strategies to optimize outcomes. Competitors benchmark against the organization\u2019s capabilities."
+          "Advanced": "Teams deliver seamless support across the lifecycle using proven methodologies. Conversations emphasize the organization credibility and authority in delivering long-term value.",
+          "Leading": "The company is a recognized leader in lifecycle delivery, using innovative tools and strategies to optimize outcomes. Competitors benchmark against the organization capabilities."
         }
       },
       {
@@ -229,11 +229,11 @@ window.assessmentData = [
           "Emerging": "The organization lacks a formal methodology for delivering solutions. Teams rely on ad hoc processes, leading to inconsistent results and reduced customer satisfaction.",
           "Basic": "A methodology is in place and includes basic steps for planning, execution, and review but lacks integration with customer-specific goals.",
           "Advanced": "The methodology is robust, with detailed steps that address customer needs at every stage of the lifecycle. Teams use it consistently, integrating it with CRM.",
-          "Leading": "The organization\u2019s methodology is a competitive differentiator, recognized as a best practice in the industry. It includes advanced tools, templates, and resources to optimize delivery."
+          "Leading": "The organization methodology is a competitive differentiator, recognized as a best practice in the industry. It includes advanced tools, templates, and resources to optimize delivery."
         }
       },
       {
-        "name": "Proven solution scalabiliy",
+        "name": "Proven solution scalability",
         "descriptions": {
           "None": "Solutions aren\u2019t built for scalability; growth strains current capabilities.",
           "Emerging": "The company struggles to scale its offerings due to resource constraints and inconsistent processes. Scalability is reactive rather than strategic, leading to inefficiencies.",
@@ -255,11 +255,11 @@ window.assessmentData = [
       {
         "name": "Solution Development Roadmap",
         "descriptions": {
-          "None": "Solution development lacks a strategic roadmap and prioritisation framework.",
+          "None": "Solution development lacks a strategic roadmap and prioritization framework.",
           "Emerging": "The solution development process is reactive, with no formal roadmap or strategic plan in place. Teams address customer needs on an ad hoc basis, leading.",
           "Basic": "A solution development roadmap exists but is limited in scope and primarily focused on short-term goals. Customer feedback is occasionally considered.",
           "Advanced": "The solution development roadmap is well-defined and integrates customer feedback, market trends, and competitive analysis. The roadmap includes both short-term deliverables and long-term strategic goals.",
-          "Leading": "The solution development roadmap is a benchmark for the industry, using. AI-driven insights and continuous improvement practices to deliver exceptional outcomes. The roadmap is dynamic."
+          "Leading": "The solution development roadmap is a benchmark for the industry, using AI-driven insights and continuous improvement practices to deliver exceptional outcomes. The roadmap is dynamic."
         }
       }
     ]
@@ -284,11 +284,11 @@ window.assessmentData = [
           "Emerging": "The company lacks a defined distribution model, relying on ad hoc or opportunistic methods to reach customers. Channels are underutilized.",
           "Basic": "The distribution model includes a mix of direct and indirect channels, with basic strategies for managing each.",
           "Advanced": "The distribution model is well-defined and optimized, with advanced tools and analytics to track performance across channels. Teams leverage insights to refine channel strategies.",
-          "Leading": "The company\u2019s distribution model is a benchmark for the industry, using AI-driven insights and advanced collaboration tools to deliver personalized, efficient solutions at scale channels."
+          "Leading": "The company distribution model is a benchmark for the industry, using AI-driven insights and advanced collaboration tools to deliver personalized, efficient solutions at scale channels."
         }
       },
       {
-        "name": "Oganization-wide sales culture",
+        "name": "Organization-wide sales culture",
         "descriptions": {
           "None": "Company lacks a cohesive sales culture driving shared success.",
           "Emerging": "The organization lacks a cohesive sales culture, with little alignment between sales and other departments. Sales efforts are viewed as isolated transactions rather than part.",
@@ -348,7 +348,7 @@ window.assessmentData = [
           "None": "No organization-wide adoption; value proposition isn\u2019t embraced across teams.",
           "Emerging": "Limited to leadership with no documentation or formal sharing mechanism. There is no shared understanding or alignment across departments, resulting in inconsistent messaging and delivery.",
           "Basic": "Some documentation exists; a few employees can articulate it and alignment is more evident. The value proposition is adopted by most teams, but execution varies.",
-          "Advanced": "Documented and integrated into some sales enablement tools, with high levels of team adoption. The value proposition is embedded into the organization\u2019s culture, with consistent.",
+          "Advanced": "Documented and integrated into some sales enablement tools, with high levels of team adoption. The value proposition is embedded into the organization culture.",
           "Leading": "Organization-wide adoption is seamless, with every team understanding and championing the value proposition. Teams proactively use the value proposition to guide decision-making and enhance customer."
         }
       },
@@ -368,7 +368,7 @@ window.assessmentData = [
           "None": "Elevator pitch is inconsistent and doesn\u2019t succinctly communicate value.",
           "Emerging": "Elevator pitches are inconsistent across teams and focus heavily on features rather than benefits. Messaging lacks alignment with customer pain points or goals.",
           "Basic": "Teams have a standardized pitch and can adapt it to different customer needs. The focus is shifting from features to outcomes.",
-          "Advanced": "Elevator pitches are well-crafted, concise, and consistently adapted to customer needs. Teams use storytelling techniques from the \"Hero\u2019s Journey\" to engage customers emotionally and highlight.",
+          "Advanced": "Elevator pitches are well-crafted, concise, and consistently adapted to customer needs. Teams use storytelling techniques to engage customers emotionally and highlight.",
           "Leading": "Elevator pitches are dynamic, data-driven, and emotionally resonant. Teams integrate real-time insights and customer-specific data to create personalized pitches that resonate deeply."
         }
       }
