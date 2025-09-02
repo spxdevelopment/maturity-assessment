@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -150,6 +151,12 @@
     #results-page h1 {
       margin-top: 0;
       color: var(--primary);
+    }
+
+    /* Increase minimum height of results page to allow for expanded content */
+    #results-page {
+      /* Set a generous minimum height so the summary, chart and table have room to breathe */
+      min-height: 120vh;
     }
     #participant-info {
       margin-bottom: 1rem;
@@ -401,7 +408,7 @@
   <!-- Introduction / capture details -->
   <div id="intro-page" class="page active">
     <h1>SalesSparx Go‑To‑Market Maturity Assessment</h1>
-     <p style="margin-top:1rem; font-size:0.9rem; color: #9e994d"> 💡For a better experience, use the desktop version. The mobile version is supported but may require extra scrolling.</p>
+    <p style="margin-top:1rem; font-size:1.25rem; color: #9e994d"><strong>💡For a better experience, use the desktop version. The mobile version is supported but may require extra scrolling.</strong></p>
     <p>Uncover the strengths and opportunities in your go‑to‑market strategy. In just a few minutes, you’ll assess your performance across seven critical categories, each rated from None (no established capability) to Leading (industry‑best practices). This assessment uses a five‑level scale:</p>
     <ul style="margin-left:1.5rem;">
       <li><strong>None (1)</strong> – No formal process in place.</li>
@@ -457,11 +464,12 @@
       <div id="participant-info"></div>
       <p id="summary-text"></p>
     </div>
-    <!-- Overall summary card showing average score and guidance -->
-    <div id="overall-summary" class="section-card"></div>
-    <!-- Radar chart display -->
-    <div class="section-card">
-      <canvas id="radarCanvas" width="600" height="500"></canvas>
+    <!-- Overall summary and radar chart combined -->
+    <div id="summary-chart-container" class="section-card" style="display:flex; flex-wrap:wrap; gap:1rem; align-items:flex-start;">
+      <div id="overall-summary" style="flex:1;"></div>
+      <div style="flex:1; min-width:250px;">
+        <canvas id="radarCanvas" width="600" height="500"></canvas>
+      </div>
     </div>
     <!-- Improvement suggestions -->
     <div class="section-card">
@@ -710,9 +718,19 @@
       // Reorder categories to follow the desired sequence. Some category names may vary slightly (e.g. Enablement vs Enablement).
       const desired = ['Value Proposition','Offering','Marketing','Sales','Delivery','Enablement Technology','Change Management'];
       if (Array.isArray(window.assessmentData)) {
+        // Correct any misspellings (e.g. "Enblement Technology") before reordering
+        window.assessmentData.forEach(cat => {
+          if (cat && typeof cat.name === 'string') {
+            const lower = cat.name.trim().toLowerCase();
+            if (lower === 'enblement technology' || lower === 'enblenment technology' || lower === 'enblement techology') {
+              cat.name = 'Enablement Technology';
+            }
+          }
+        });
         const reordered = [];
         desired.forEach(name => {
-          const found = window.assessmentData.find(c => c.name === name);
+          // Find category by name using case-insensitive comparison and trimming whitespace
+          const found = window.assessmentData.find(c => c.name && c.name.trim().toLowerCase() === name.trim().toLowerCase());
           if (found && !reordered.includes(found)) reordered.push(found);
         });
         // Append any remaining categories that were not explicitly listed
@@ -773,9 +791,19 @@
       (function reorderOnStart() {
         const desired = ['Value Proposition','Offering','Marketing','Sales','Delivery','Enablement Technology','Change Management'];
         if (Array.isArray(window.assessmentData)) {
+          // Correct any misspellings (e.g. "Enblement Technology") before reordering
+          window.assessmentData.forEach(cat => {
+            if (cat && typeof cat.name === 'string') {
+              const lower = cat.name.trim().toLowerCase();
+              if (lower === 'enblement technology' || lower === 'enblenment technology' || lower === 'enblement techology') {
+                cat.name = 'Enablement Technology';
+              }
+            }
+          });
           const reordered = [];
           desired.forEach(name => {
-            const found = window.assessmentData.find(c => c.name === name);
+            // Find category by name using case-insensitive comparison and trimming whitespace
+            const found = window.assessmentData.find(c => c.name && c.name.trim().toLowerCase() === name.trim().toLowerCase());
             if (found && !reordered.includes(found)) reordered.push(found);
           });
           window.assessmentData.forEach(cat => {
@@ -876,7 +904,22 @@
           // Step label
           const labelEl = document.createElement('div');
           labelEl.className = 'step-label';
-          labelEl.textContent = cat.name;
+          /*
+           * Display long category names (e.g. "Enablement Technology") on two lines to
+           * prevent truncation in the progress bar. Split the name at the first space.
+           * This ensures names like "Value Proposition" or "Change Management" wrap
+           * gracefully without being cut off. If there is no space, fall back to the
+           * full name on a single line.
+           */
+          const words = (cat.name || '').split(' ');
+          if (words.length > 1) {
+            // Append first word, a line break, then the rest of the words
+            labelEl.appendChild(document.createTextNode(words[0]));
+            labelEl.appendChild(document.createElement('br'));
+            labelEl.appendChild(document.createTextNode(words.slice(1).join(' ')));
+          } else {
+            labelEl.textContent = cat.name;
+          }
           stepDiv.appendChild(numEl);
           stepDiv.appendChild(labelEl);
           stepperEl.appendChild(stepDiv);
@@ -1004,38 +1047,95 @@
       const highCats = categoryScores.filter(c => c.avg >= 4).map(c => c.name);
       const midCats = categoryScores.filter(c => c.avg >= 3 && c.avg < 4).map(c => c.name);
       const lowCats = categoryScores.filter(c => c.avg < 3).map(c => c.name);
-      // Build overall narrative using multiple paragraphs and without referencing the FUSE framework directly.
+      // Build concise overall narrative. Avoid advanced vocabulary and clearly call out strengths and gaps.
       const nextStageMapOverall = { None: 'Emerging', Emerging: 'Basic', Basic: 'Advanced', Advanced: 'Leading', Leading: 'Leading' };
       const overallNext = nextStageMapOverall[overallLevel] || 'Emerging';
+      // Identify up to three categories that need the most improvement (lowest scores)
+      const sortedByAvg = [...categoryScores].sort((a, b) => a.avg - b.avg);
+      let topImprovements = sortedByAvg.filter(c => c.avg < 4).slice(0, 3).map(c => c.name);
+      // Ensure Enablement Technology comes before Change Management in top improvements
+      const orderPreference = ['Enablement Technology','Change Management'];
+      topImprovements = topImprovements.sort((a,b) => {
+        const aIdx = orderPreference.includes(a) ? orderPreference.indexOf(a) : Infinity;
+        const bIdx = orderPreference.includes(b) ? orderPreference.indexOf(b) : Infinity;
+        if (aIdx !== bIdx) return aIdx - bIdx;
+        // fallback to alphabetical ordering for consistency
+        return a.localeCompare(b);
+      });
+      // Compose narrative sentences
       let narrativeHtml = '';
-      // Paragraph 1: headline score and stage
-      narrativeHtml += '<p>Your overall go‑to‑market maturity score is <strong>' + totalAvg.toFixed(1) + '</strong> out of 5, placing you in the <strong>' + overallLevel + '</strong> stage. ';
-      if (overallLevel === 'None') {
-        narrativeHtml += 'At this stage, your organization lacks formal processes across most areas.';
-      } else if (overallLevel === 'Emerging') {
-        narrativeHtml += 'You have begun building structure, but many capabilities remain nascent.';
-      } else if (overallLevel === 'Basic') {
-        narrativeHtml += 'Foundational practices are in place, yet there is significant room to optimize and scale.';
-      } else if (overallLevel === 'Advanced') {
-        narrativeHtml += 'Your approach is data‑driven and optimized, though a few dimensions could still be strengthened.';
-      } else if (overallLevel === 'Leading') {
-        narrativeHtml += 'You exhibit world‑class maturity and continuous improvement across your go‑to‑market functions.';
+      // Overall score and stage
+      narrativeHtml += '<p>Your overall go‑to‑market maturity score is <strong>' + totalAvg.toFixed(1) + '</strong> out of 5, placing you in the <strong>' + overallLevel + '</strong> stage.</p>';
+      // Helper to format lists of categories with proper articles and conjunctions.
+      function formatCategoryList(list, prefix, singularSuffix, pluralSuffix) {
+        // prefix should include the verb phrase and the word "the " or "in the " before categories
+        // singularSuffix and pluralSuffix define the word after the category/ies (e.g., "category" vs "categories").
+        if (!Array.isArray(list) || list.length === 0) return '';
+        if (list.length === 1) {
+          return prefix + list[0] + ' ' + singularSuffix + '.';
+        } else if (list.length === 2) {
+          return prefix + list[0] + ' and ' + list[1] + ' ' + pluralSuffix + '.';
+        } else {
+          // More than two: join all but last with commas, then use 'and' before last
+          const allButLast = list.slice(0, -1).join(', ');
+          const last = list[list.length - 1];
+          return prefix + allButLast + ', and ' + last + ' ' + pluralSuffix + '.';
+        }
       }
-      narrativeHtml += '</p>';
-      // Paragraph 2: strengths, mid-range and low-range categories
-      narrativeHtml += '<p>';
+      // Helper to build a simple category list string (e.g. "the Offering and Sales categories").
+      function toListString(list) {
+        if (!Array.isArray(list) || list.length === 0) return '';
+        if (list.length === 1) {
+          return 'the ' + list[0] + ' category';
+        } else if (list.length === 2) {
+          return 'the ' + list[0] + ' and ' + list[1] + ' categories';
+        } else {
+          const allButLast = list.slice(0, -1).join(', ');
+          const last = list[list.length - 1];
+          return 'the ' + allButLast + ', and ' + last + ' categories';
+        }
+      }
+      // Strengths – call out categories with high average scores using natural language
       if (highCats.length) {
-        narrativeHtml += 'You excel in <strong>' + highCats.join(', ') + '</strong>. ';
+        // Build a list string like "the Offering and Sales categories"
+        const excelListStr = toListString(highCats);
+        narrativeHtml += '<p>Your highest‑scoring categories are ' + excelListStr + '. You are starting to excel in these categories.</p>';
+      } else {
+        // If no categories are in the highest bucket (avg >= 4), highlight the top scoring categories relative to others
+        // Sort categories by descending average to identify relative strengths
+        const sorted = [...categoryScores].sort((a, b) => b.avg - a.avg);
+        const topNames = sorted.slice(0, 2).map(c => c.name);
+        const topListStr = toListString(topNames);
+        narrativeHtml += '<p>Although none of your categories have reached advanced maturity, your strongest areas are ' + topListStr + '. You are starting to excel in these categories, so build upon them as you address your lower‑scoring areas.</p>';
       }
-      if (midCats.length) {
-        narrativeHtml += midCats.join(', ') + ' show solid foundations but would benefit from further development. ';
-      }
+      // Improvement areas – call out categories needing attention using natural language
       if (lowCats.length) {
-        narrativeHtml += 'Key opportunities lie within <strong>' + lowCats.join(', ') + '</strong>, where establishing stronger processes and data‑driven practices will have the greatest impact. ';
+        // Prefix: "You still need to improve in the "
+        narrativeHtml += '<p>' + formatCategoryList(lowCats, 'You still need to improve in the ', 'category', 'categories') + '</p>';
       }
-      narrativeHtml += '</p>';
-      // Paragraph 3: guidance for next steps
-      narrativeHtml += '<p>To progress from <strong>' + overallLevel + '</strong> to <strong>' + overallNext + '</strong>, concentrate on strengthening your core capabilities, aligning teams around shared processes and data, and investing in repeatable, scalable selling motions. Use the table and curated resources below to prioritize initiatives that will help you ascend to the next maturity stage. For deeper guidance, download our book <a href="https://salessparx.com/light-your-sales-fuse/" target="_blank">Light Your Sales Fuse</a> or contact us for personalized advice.</p>';
+      // Detailed guidance on top improvement areas
+      if (topImprovements.length) {
+        // Collect up to three main suggestions from the top improvement categories
+        let suggestionsList = [];
+        topImprovements.forEach(catName => {
+          const suggestions = improvementSuggestions[catName] || [];
+          suggestionsList.push(...suggestions);
+        });
+        // Take up to three suggestions in total
+        const mainSuggestions = suggestionsList.slice(0, 3);
+        narrativeHtml += '<p>Here are three main suggestions to move from ' + overallLevel + ' to ' + overallNext + ':</p>';
+        narrativeHtml += '<ul>';
+        mainSuggestions.forEach(s => {
+          const clean = s.replace(/\.$/, '');
+          narrativeHtml += '<li>' + clean + '.</li>';
+        });
+        narrativeHtml += '</ul>';
+      } else {
+        narrativeHtml += '<p>Your performance is balanced across categories, but continuous improvement is key to sustaining growth.</p>';
+      }
+      // Reference table below and book download
+      narrativeHtml += '<p>For more details, see the table below with suggested actions and resources for each category.</p>';
+      narrativeHtml += '<p>Looking for deeper guidance? You can download our book <a href="https://salessparx.com/light-your-sales-fuse/" target="_blank">Light Your Sales FUSE</a> for step‑by‑step strategies.</p>';
       // Update the overall summary card with a heading and the narrative
       const overallDiv = document.getElementById('overall-summary');
       overallDiv.innerHTML = `<h2>Overall Maturity Summary</h2>` + narrativeHtml;
@@ -1058,9 +1158,14 @@
       // Build a modern table summarizing scores, classifications, improvements and resources
       const improvementsDiv = document.getElementById('improvements');
       improvementsDiv.innerHTML = '';
+      // Add a title above the categories table
+      const catTitle = document.createElement('h2');
+      catTitle.textContent = 'Categories Actions';
+      improvementsDiv.appendChild(catTitle);
       const table = document.createElement('table');
       table.className = 'improvements-table';
       const headerRow = document.createElement('tr');
+      // Header row without the action summary column
       headerRow.innerHTML = '<th>Category</th><th>Average Score</th><th>Level</th><th>Improvement Suggestions</th><th>Recommended Resources</th>';
       table.appendChild(headerRow);
       window.assessmentData.forEach(cat => {
@@ -1091,6 +1196,7 @@
         const levelTd = document.createElement('td');
         levelTd.textContent = classification;
         tr.appendChild(levelTd);
+        // We no longer include an action summary column in the table.
         // Suggestions
         const suggTd = document.createElement('td');
         // Determine the next maturity stage based on the current classification
