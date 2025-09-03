@@ -720,11 +720,11 @@
       // Reorder categories to follow the desired sequence. Some category names may vary slightly (e.g. Enablement vs Enablement).
       const desired = ['Value Proposition','Offering','Marketing','Sales','Delivery','Enablement Technology','Change Management'];
       if (Array.isArray(window.assessmentData)) {
-        // Correct any misspellings (e.g. "Enblement Technology") before reordering
+        // Correct any misspellings (e.g. "Enablement Technology") before reordering
         window.assessmentData.forEach(cat => {
           if (cat && typeof cat.name === 'string') {
             const lower = cat.name.trim().toLowerCase();
-            if (lower === 'enblement technology' || lower === 'enblenment technology' || lower === 'enblement techology') {
+            if (lower === 'enablement technology' || lower === 'enblenment technology' || lower === 'enablement techology') {
               cat.name = 'Enablement Technology';
             }
           }
@@ -793,11 +793,11 @@
       (function reorderOnStart() {
         const desired = ['Value Proposition','Offering','Marketing','Sales','Delivery','Enablement Technology','Change Management'];
         if (Array.isArray(window.assessmentData)) {
-          // Correct any misspellings (e.g. "Enblement Technology") before reordering
+          // Correct any misspellings (e.g. "Enablement Technology") before reordering
           window.assessmentData.forEach(cat => {
             if (cat && typeof cat.name === 'string') {
               const lower = cat.name.trim().toLowerCase();
-              if (lower === 'enblement technology' || lower === 'enblenment technology' || lower === 'enblement techology') {
+              if (lower === 'enablement technology' || lower === 'enblenment technology' || lower === 'enablement techology') {
                 cat.name = 'Enablement Technology';
               }
             }
