@@ -1097,18 +1097,25 @@
           return 'the ' + allButLast + ', and ' + last + ' categories';
         }
       }
-      // Strengths – call out categories with high average scores using natural language
-      if (highCats.length) {
-        // Build a list string like "the Offering and Sales categories"
-        const excelListStr = toListString(highCats);
-        narrativeHtml += '<p>Your organization highest‑scoring categories are ' + excelListStr + '. You are starting to excel in these categories.</p>';
-      } else {
-        // If no categories are in the highest bucket (avg >= 4), highlight the top scoring categories relative to others
+     // Strengths – identify up to two categories with average >= 3 (Basic) and use appropriate phrasing.
+      {
         // Sort categories by descending average to identify relative strengths
-        const sorted = [...categoryScores].sort((a, b) => b.avg - a.avg);
-        const topNames = sorted.slice(0, 2).map(c => c.name);
-        const topListStr = toListString(topNames);
-        narrativeHtml += '<p>Although none of your categories have reached advanced maturity, your strongest areas are ' + topListStr + '. You are starting to excel in these categories, so build upon them as you address your lower‑scoring areas.</p>';
+        const sortedStrengths = [...categoryScores].sort((a, b) => b.avg - a.avg);
+        // Filter categories that have reached Basic maturity or higher (avg >= 3)
+        const strongCats = sortedStrengths.filter(c => c.avg >= 3);
+        if (strongCats.length >= 2) {
+          // Take the top two categories and list them
+          const topNames = strongCats.slice(0, 2).map(c => c.name);
+          const excelListStr = toListString(topNames);
+          narrativeHtml += '<p>Your organization highest‑scoring categories are ' + excelListStr + '. You are starting to excel in these categories.</p>';
+        } else if (strongCats.length === 1) {
+          // Exactly one category qualifies; use singular phrasing
+          const onlyName = strongCats[0].name;
+          narrativeHtml += '<p>Your organization highest‑scoring category is the ' + onlyName + ' category. You are starting to excel in this category.</p>';
+        } else {
+          // No categories meet the Basic threshold – do not claim excellence
+          narrativeHtml += '<p>Your organization does not present high scores in any categories. Focus on enhancing all areas to build a foundation for maturity.</p>';
+        }
       }
       // Improvement areas – call out categories needing attention using natural language
       if (lowCats.length) {
