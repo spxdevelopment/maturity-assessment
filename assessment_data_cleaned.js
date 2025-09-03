@@ -268,7 +268,7 @@ window.assessmentData = [
     "name": "Sales",
     "subcategories": [
       {
-        "name": "Defined sales process",
+        "name": "Formaly Defined sales process",
         "descriptions": {
           "None": "Sales process is undefined and ad hoc, hindering consistency.",
           "Emerging": "The sales process is informal and varies widely across teams, relying on individual effort rather than standardized steps.",
