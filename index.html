@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -857,27 +856,34 @@
       window.print();
     });
 
-    // Save as PDF button generates a PDF of the results page using html2pdf.
+    // Save as PDF button: use html2pdf if available, otherwise fall back to the browser print dialog.
     document.getElementById('pdf-btn').addEventListener('click', () => {
       const bodyEl = document.body;
-      // Add a class during export to apply PDF-specific styles and reduce font sizes.
       bodyEl.classList.add('pdf-export');
       const element = document.getElementById('results-page');
-      const opt = {
-        margin: 0.3,
-        filename: 'Maturity_Assessment_Results.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, scrollY: 0, logging: false },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
-        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-      };
-      // Generate and save the PDF. After completion, remove the export class.
-      html2pdf().set(opt).from(element).save().then(() => {
+      // Check if html2pdf library is loaded and usable
+      const canUsePdfLib = typeof window.html2pdf !== 'undefined' && window.html2pdf;
+      if (canUsePdfLib) {
+        const opt = {
+          margin: 0.3,
+          filename: 'Maturity_Assessment_Results.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true, scrollY: 0, logging: false },
+          jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+          pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        };
+        window.html2pdf().set(opt).from(element).save().then(() => {
+          bodyEl.classList.remove('pdf-export');
+        }).catch(() => {
+          bodyEl.classList.remove('pdf-export');
+          // If PDF generation fails, fallback to print dialog
+          window.print();
+        });
+      } else {
+        // Fallback when html2pdf is not available: open browser print dialog
+        window.print();
         bodyEl.classList.remove('pdf-export');
-      }).catch(() => {
-        // Ensure the class is removed if an error occurs.
-        bodyEl.classList.remove('pdf-export');
-      });
+      }
     });
 
     // Restart button returns to intro page and pre-fills the user's details
