@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -486,7 +487,7 @@
     <!-- Brand logo -->
     <img class="logo" src="logo_wide.png" alt="SalesSparx logo" />
     <!-- Print button -->
-    <div style="display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:center; margin-top:1rem;">
+    <div data-html2canvas-ignore="true" style="display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:center; margin-top:1rem;">
       <button id="print-btn" class="primary" type="button">Print Results</button>
       <button id="pdf-btn" class="primary" type="button">Save as PDF</button>
       <button id="restart-btn" class="primary" type="button">Restart</button>
@@ -530,6 +531,8 @@
 <!-- Use external assessment data generated from the cleaned Excel. -->
 <!-- The embedded JSON dataset above remains for fallback only; it will not be parsed. -->
 <script src="assessment_data_cleaned.js"></script>
+<!-- Load html2pdf.js library for PDF generation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-YcsIPa2z3mV3jYj3fY4Jg1w0D0qG8w9S8m8w3g8oVg6l6dF8w7V0F9ZQJ8y0vS8Lqf9m3jv8g2sS6nq8JgO3HQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
     // Data imported from summary file. This object defines categories, questions and maturity descriptions.
     
@@ -843,9 +846,18 @@
       window.print();
     });
 
-    // Save as PDF button uses window.print() to allow browser PDF download
+    // Save as PDF button generates and downloads a PDF of the results page
     document.getElementById('pdf-btn').addEventListener('click', () => {
-      window.print();
+      const element = document.getElementById('results-page');
+      const opt = {
+        margin: 0.5,
+        filename: 'Maturity_Assessment_Results.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+      };
+      html2pdf().set(opt).from(element).save();
     });
 
     // Restart button returns to intro page and pre-fills the user's details
