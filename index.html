@@ -155,8 +155,18 @@
 
     /* Increase minimum height of results page to allow for expanded content */
     #results-page {
-      /* Set a generous minimum height so the summary, chart and table have room to breathe */
-      min-height: 120vh;
+      /* Let the results page grow naturally to avoid blank pages in PDF */
+      min-height: auto;
+    }
+    /* Styles applied only during PDF export to reduce font sizes and improve layout */
+    .pdf-export #results-page {
+      font-size: 0.9rem;
+    }
+    .pdf-export #results-page h1 {
+      font-size: 1.8rem;
+    }
+    .pdf-export #results-page h2 {
+      font-size: 1.4rem;
     }
     #participant-info {
       margin-bottom: 1rem;
@@ -487,12 +497,13 @@
     <!-- Brand logo -->
     <img class="logo" src="logo_wide.png" alt="SalesSparx logo" />
     <!-- Print button -->
-    <div data-html2canvas-ignore="true" style="display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:center; margin-top:1rem;">
-      <button id="print-btn" class="primary" type="button">Print Results</button>
-      <button id="pdf-btn" class="primary" type="button">Save as PDF</button>
-      <button id="restart-btn" class="primary" type="button">Restart</button>
-      <button id="back-btn" class="primary" type="button">Back</button>
-    </div>
+      <!-- Add an attribute to tell html2canvas to ignore this control bar when capturing the PDF -->
+      <div data-html2canvas-ignore="true" style="display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:center; margin-top:1rem;">
+        <button id="print-btn" class="primary" type="button">Print Results</button>
+        <button id="pdf-btn" class="primary" type="button">Save as PDF</button>
+        <button id="restart-btn" class="primary" type="button">Restart</button>
+        <button id="back-btn" class="primary" type="button">Back</button>
+      </div>
   </div>
 
   <!-- Admin login page -->
@@ -531,8 +542,8 @@
 <!-- Use external assessment data generated from the cleaned Excel. -->
 <!-- The embedded JSON dataset above remains for fallback only; it will not be parsed. -->
 <script src="assessment_data_cleaned.js"></script>
-<!-- Load html2pdf.js library for PDF generation -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Load html2pdf.js from CDN for generating PDFs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GyKV2JAnCmvYzu3/n6PvJEa3TBUnIFVQGryuVKyXjH9MuNoMNFcQJUO2c+hJ1ytY1/6V2vNhbbX6YsJhBKt3PQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
     // Data imported from summary file. This object defines categories, questions and maturity descriptions.
     
@@ -846,22 +857,27 @@
       window.print();
     });
 
-    // Save as PDF button uses html2pdf.js to download the results page as PDF. Falls back to print if library is unavailable.
+    // Save as PDF button generates a PDF of the results page using html2pdf.
     document.getElementById('pdf-btn').addEventListener('click', () => {
+      const bodyEl = document.body;
+      // Add a class during export to apply PDF-specific styles and reduce font sizes.
+      bodyEl.classList.add('pdf-export');
       const element = document.getElementById('results-page');
-      if (typeof html2pdf !== 'undefined') {
-        const opt = {
-          margin: 0.5,
-          filename: 'Maturity_Assessment_Results.pdf',
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true },
-          jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
-          pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-        };
-        html2pdf().set(opt).from(element).save();
-      } else {
-        window.print();
-      }
+      const opt = {
+        margin: 0.3,
+        filename: 'Maturity_Assessment_Results.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, scrollY: 0, logging: false },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+      };
+      // Generate and save the PDF. After completion, remove the export class.
+      html2pdf().set(opt).from(element).save().then(() => {
+        bodyEl.classList.remove('pdf-export');
+      }).catch(() => {
+        // Ensure the class is removed if an error occurs.
+        bodyEl.classList.remove('pdf-export');
+      });
     });
 
     // Restart button returns to intro page and pre-fills the user's details
