@@ -268,6 +268,47 @@
       padding-left: 1.25rem;
     }
 
+    /* Reduce table cell padding to fit more content per page */
+    .improvements-table th, .improvements-table td {
+      padding: 0.5rem;
+    }
+
+    /* Print-specific adjustments for better PDF layout */
+    @page {
+      /* Reduce default page margins when printing to minimize blank space */
+      margin: 0.5in;
+    }
+    @media print {
+      /* Adjust global font size for print to fit more content */
+      body {
+        font-size: 0.9rem;
+      }
+      /* Ensure results page height is dynamic */
+      #results-page {
+        min-height: auto;
+      }
+      /* Resize headings for print */
+      #results-page h1 {
+        font-size: 1.8rem;
+      }
+      #results-page h2 {
+        font-size: 1.4rem;
+      }
+      /* Shrink radar chart for print */
+      #radarCanvas {
+        max-width: 500px;
+        height: 400px;
+      }
+      /* Avoid page breaks inside cards */
+      .section-card {
+        page-break-inside: avoid;
+      }
+      /* Hide action buttons in print view */
+      #print-btn, #pdf-btn, #restart-btn, #back-btn {
+        display: none;
+      }
+    }
+
     /* Styling for the hover instruction on the assessment page */
     .hover-instruction {
       font-weight: bold;
@@ -542,7 +583,7 @@
 <!-- The embedded JSON dataset above remains for fallback only; it will not be parsed. -->
 <script src="assessment_data_cleaned.js"></script>
     <!-- Load html2pdf.js from CDN for generating PDFs -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GyKV2JAnCmvYzu3/n6PvJEa3TBUnIFVQGryuVKyXjH9MuNoMNFcQJUO2c+hJ1ytY1/6V2vNhbbX6YsJhBKt3PQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
     // Data imported from summary file. This object defines categories, questions and maturity descriptions.
     
